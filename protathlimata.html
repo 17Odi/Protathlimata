@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Πρωταθλήματα 2026-2027</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card-alt: #172033;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 10px;
+    font-size: 14px;
+  }
+  h1 { font-size: 1.2rem; margin: 4px 0 2px; text-align: center; }
+  .subtitle { text-align: center; color: var(--muted); font-size: 0.75rem; margin-bottom: 10px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 8px; }
+  .tab {
+    flex: 1; text-align: center; padding: 9px 4px; background: var(--card);
+    border-radius: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    border: 2px solid transparent; color: var(--muted);
+  }
+  .tab.active { border-color: var(--accent); color: var(--accent); background: var(--card-alt); }
+  .subtabs { display: flex; gap: 6px; margin-bottom: 10px; }
+  .subtab {
+    flex: 1; text-align: center; padding: 7px 4px; background: var(--card-alt);
+    border-radius: 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--border); color: var(--muted);
+  }
+  .subtab.active { border-color: var(--green); color: var(--green); }
+  .hidden { display: none; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; font-size: 0.7rem; }
+  th, td { padding: 5px 3px; text-align: center; border-bottom: 1px solid var(--border); }
+  th { background: var(--card-alt); color: var(--muted); font-weight: 600; font-size: 0.62rem; text-transform: uppercase; }
+  td.team { text-align: left; font-weight: 600; white-space: nowrap; font-size: 0.68rem; }
+  td.pts { font-weight: 700; color: var(--accent); }
+  .rank-badge { display: inline-block; width: 15px; text-align: center; font-weight: 700; margin-right: 3px; }
+  tr.zone-title .rank-badge { color: var(--green); }
+  tr.zone-europe .rank-badge { color: var(--yellow); }
+  tr.zone-relegation .rank-badge { color: var(--red); }
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; font-size: 0.65rem; color: var(--muted); }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .split-wrap { display: flex; gap: 8px; margin-top: 10px; }
+  .split-wrap > div { flex: 1; }
+  .split-title { font-size: 0.72rem; font-weight: 700; margin-bottom: 4px; color: var(--muted); }
+  .note { margin-top: 10px; padding: 8px 10px; background: var(--card-alt); border-radius: 10px; font-size: 0.68rem; color: var(--muted); line-height: 1.4; }
+  .mw-header {
+    background: var(--card); border-radius: 10px; padding: 10px 12px; margin-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+    border: 1px solid var(--border); gap: 6px; flex-wrap: wrap;
+  }
+  .mw-status-wrap { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .acc-badge { font-size: 0.62rem; font-weight: 700; white-space: nowrap; }
+  .acc-yellow { color: var(--yellow); }
+  .acc-green { color: var(--green); }
+  .mw-header.done { border-color: rgba(34,197,94,0.4); }
+  .mw-header .mw-title { font-weight: 700; font-size: 0.8rem; }
+  .mw-header .mw-date { font-weight: 400; color: var(--muted); font-size: 0.65rem; }
+  .match-date { text-align: center; font-size: 0.6rem; color: var(--accent); padding-top: 6px; }
+  .mw-header .mw-status { font-size: 0.65rem; color: var(--muted); }
+  .mw-body { background: var(--card-alt); border-radius: 10px; padding: 8px; margin: -4px 0 10px; }
+  .match-row {
+    display: flex; align-items: center; gap: 6px; padding: 7px 4px;
+    border-bottom: 1px solid var(--border); font-size: 0.72rem;
+  }
+  .match-row:last-child { border-bottom: none; }
+  .match-row .home { flex: 1; text-align: right; }
+  .match-row .away { flex: 1; text-align: left; }
+  .score-inputs { display: flex; align-items: center; gap: 3px; }
+  .score-inputs input {
+    width: 32px; text-align: center; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; padding: 4px 2px; font-size: 0.8rem;
+  }
+  .score-inputs input:focus { border-color: var(--accent); outline: none; }
+  .dash { color: var(--muted); }
+  .match-row-wrap { border-bottom: 1px solid var(--border); }
+  .match-row-wrap:last-child { border-bottom: none; }
+  .match-row-wrap .match-row { border-bottom: none; }
+  .predict-hint { text-align: center; font-size: 0.62rem; color: var(--yellow); padding-bottom: 5px; }
+  .predict-hint.hit-exact { color: var(--green); }
+  .predict-hint.hit-result { color: var(--yellow); }
+  .predict-hint.hit-miss { color: var(--red); }
+  .probs-line { text-align: center; font-size: 0.58rem; color: var(--muted); padding-bottom: 6px; }
+  .h2h-tag { color: var(--accent); }
+  .api-box { background: var(--card); border-radius: 10px; padding: 10px; margin-bottom: 10px; border: 1px solid var(--border); }
+  .api-row { display: flex; gap: 6px; margin-bottom: 6px; }
+  .api-row:last-child { margin-bottom: 0; }
+  .api-row input, .api-row select {
+    flex: 1; background: var(--card-alt); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px; font-size: 0.75rem; min-width: 0;
+  }
+  .api-row button {
+    background: var(--accent); color: var(--bg); border: none; border-radius: 8px;
+    padding: 8px 10px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; cursor: pointer;
+  }
+  .api-status { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+  .reset-btn {
+    display: block; width: 100%; margin-top: 14px; padding: 10px; background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px; color: var(--red);
+    font-size: 0.75rem; font-weight: 600; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>⚽ Πρωταθλήματα 2026-2027</h1>
+<div class="subtitle">Premier League · La Liga · Bundesliga — καταχώρησε τα σκορ κάθε αγωνιστικής</div>
+
+<div class="tabs">
+  <div class="tab active" data-league="epl">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</div>
+  <div class="tab" data-league="liga">🇪🇸 La Liga</div>
+  <div class="tab" data-league="bundesliga">🇩🇪 Bundesliga</div>
+  <div class="tab" data-league="api">🌐 API (12 πρωτ.)</div>
+</div>
+
+<div class="subtabs">
+  <div class="subtab active" data-view="table">📊 Βαθμολογία</div>
+  <div class="subtab" data-view="fixtures">📅 Αγωνιστικές</div>
+</div>
+
+<div id="view-table"></div>
+<div id="view-fixtures" class="hidden"></div>
+
+<div id="view-api" class="hidden">
+  <div class="api-box">
+    <div class="api-row">
+      <input type="password" id="apiKeyInput" placeholder="API key (football-data.org)">
+      <button id="saveKeyBtn">Αποθήκευση</button>
+    </div>
+    <div class="api-row">
+      <select id="compSelect"></select>
+      <button id="refreshApiBtn">🔄 Ανανέωση</button>
+    </div>
+    <div id="apiStatus" class="api-status"></div>
+  </div>
+  <div id="apiStandings"></div>
+  <div id="apiFixtures"></div>
+</div>
+
+<div class="legend">
+  <span><span class="dot" style="background:var(--green)"></span> Champions League</span>
+  <span><span class="dot" style="background:var(--yellow)"></span> Ευρωπαϊκή θέση</span>
+  <span><span class="dot" style="background:var(--red)"></span> Υποβιβασμός</span>
+</div>
+
+<button class="reset-btn" id="resetBtn">↺ Επαναφορά όλων των σκορ (τρέχον πρωτάθλημα)</button>
+
+<script>
+// ---------- TEAM NAME MAPS ----------
+const EPL_NAMES = {
+  "Arsenal":"Arsenal", "Aston Villa":"Aston Villa", "Bournemouth":"AFC Bournemouth",
+  "Brentford":"Brentford FC", "Brighton":"Brighton & Hove Albion", "Chelsea":"Chelsea FC",
+  "Coventry":"Coventry City", "Crystal Palace":"Crystal Palace", "Everton":"Everton FC",
+  "Fulham":"Fulham FC", "Hull":"Hull City", "Ipswich":"Ipswich Town", "Leeds":"Leeds United",
+  "Liverpool":"Liverpool FC", "Man City":"Manchester City", "Man Utd":"Manchester United",
+  "Newcastle":"Newcastle United", "Nott'm Forest":"Nottingham Forest", "Spurs":"Tottenham Hotspur",
+  "Sunderland":"Sunderland AFC"
+};
+const LIGA_NAMES = {
+  "Alaves":"Alavés", "Athletic":"Athletic Club", "Atletico":"Atlético Madrid",
+  "Barcelona":"FC Barcelona", "Betis":"Real Betis", "Celta":"Celta Vigo",
+  "Depor":"RC Deportivo", "Elche":"Elche CF", "Espanyol":"Espanyol",
+  "Getafe":"Getafe CF", "Levante":"Levante UD", "Malaga":"Málaga CF",
+  "Osasuna":"CA Osasuna", "Racing":"Racing Santander", "Rayo":"Rayo Vallecano",
+  "RealMadrid":"Real Madrid", "Sevilla":"Sevilla FC", "Sociedad":"Real Sociedad",
+  "Valencia":"Valencia CF", "Villarreal":"Villarreal CF"
+};
+const BL_NAMES = {
+  "Bayern":"FC Bayern München", "Stuttgart":"VfB Stuttgart", "Elversberg":"SV Elversberg",
+  "Leverkusen":"Bayer 04 Leverkusen", "Koln":"1. FC Köln", "Hoffenheim":"TSG Hoffenheim",
+  "UnionBerlin":"1. FC Union Berlin", "Frankfurt":"Eintracht Frankfurt", "Mainz":"1. FSV Mainz 05",
+  "Paderborn":"SC Paderborn 07", "Leipzig":"RB Leipzig", "Gladbach":"Borussia Mönchengladbach",
+  "Dortmund":"Borussia Dortmund", "Hamburg":"Hamburger SV", "Freiburg":"Sport-Club Freiburg",
+  "Bremen":"SV Werder Bremen", "Augsburg":"FC Augsburg", "Schalke":"FC Schalke 04"
+};
+
+// ---------- FIXTURES: [round, home, away, homeGoals, awayGoals] (null = not played) ----------
+const EPL_FIXTURES = [
+[1,"Arsenal","Coventry",3,0],[1,"Hull","Man Utd",2,0],[1,"Everton","Crystal Palace",2,0],[1,"Ipswich","Sunderland",2,1],[1,"Nott'm Forest","Leeds",0,1],[1,"Brentford","Spurs",3,0],[1,"Brighton","Aston Villa",4,0],[1,"Man City","Bournemouth",2,1],[1,"Newcastle","Liverpool",2,2],[1,"Fulham","Chelsea",2,3],
+[2,"Crystal Palace","Man City",1,4],[2,"Liverpool","Nott'm Forest",2,2],[2,"Bournemouth","Everton",1,1],[2,"Coventry","Hull",0,1],[2,"Spurs","Newcastle",0,2],[2,"Chelsea","Brighton",4,3],[2,"Leeds","Brentford",1,1],[2,"Sunderland","Fulham",1,0],[2,"Man Utd","Ipswich",5,2],[2,"Aston Villa","Arsenal",0,1],
+[3,"Ipswich","Liverpool",0,2],[3,"Newcastle","Bournemouth",null,null],[3,"Brentford","Sunderland",null,null],[3,"Brighton","Leeds",null,null],[3,"Fulham","Crystal Palace",null,null],[3,"Man City","Coventry",null,null],[3,"Nott'm Forest","Spurs",null,null],[3,"Hull","Aston Villa",null,null],[3,"Everton","Man Utd",null,null],[3,"Arsenal","Chelsea",null,null],
+[4,"Bournemouth","Brentford",null,null],[4,"Aston Villa","Nott'm Forest",null,null],[4,"Chelsea","Hull",null,null],[4,"Crystal Palace","Ipswich",null,null],[4,"Liverpool","Fulham",null,null],[4,"Spurs","Everton",null,null],[4,"Sunderland","Arsenal",null,null],[4,"Coventry","Brighton",null,null],[4,"Man Utd","Man City",null,null],[4,"Leeds","Newcastle",null,null],
+[5,"Brentford","Chelsea",null,null],[5,"Spurs","Aston Villa",null,null],[5,"Brighton","Arsenal",null,null],[5,"Everton","Ipswich",null,null],[5,"Newcastle","Hull",null,null],[5,"Nott'm Forest","Coventry",null,null],[5,"Bournemouth","Liverpool",null,null],[5,"Leeds","Crystal Palace",null,null],[5,"Man City","Sunderland",null,null],[5,"Fulham","Man Utd",null,null],
+[6,"Arsenal","Leeds",null,null],[6,"Aston Villa","Brentford",null,null],[6,"Chelsea","Bournemouth",null,null],[6,"Ipswich","Fulham",null,null],[6,"Sunderland","Brighton",null,null],[6,"Man Utd","Spurs",null,null],[6,"Crystal Palace","Nott'm Forest",null,null],[6,"Hull","Everton",null,null],[6,"Liverpool","Man City",null,null],[6,"Coventry","Newcastle",null,null],
+[7,"Everton","Chelsea",null,null],[7,"Brentford","Liverpool",null,null],[7,"Fulham","Hull",null,null],[7,"Man City","Ipswich",null,null],[7,"Newcastle","Aston Villa",null,null],[7,"Bournemouth","Sunderland",null,null],[7,"Brighton","Crystal Palace",null,null],[7,"Leeds","Man Utd",null,null],[7,"Nott'm Forest","Arsenal",null,null],[7,"Spurs","Coventry",null,null],
+[8,"Ipswich","Nott'm Forest",null,null],[8,"Aston Villa","Man City",null,null],[8,"Arsenal","Everton",null,null],[8,"Coventry","Fulham",null,null],[8,"Chelsea","Spurs",null,null],[8,"Crystal Palace","Newcastle",null,null],[8,"Hull","Brentford",null,null],[8,"Liverpool","Brighton",null,null],[8,"Man Utd","Bournemouth",null,null],[8,"Sunderland","Leeds",null,null],
+[9,"Chelsea","Man Utd",null,null],[9,"Bournemouth","Leeds",null,null],[9,"Brentford","Nott'm Forest",null,null],[9,"Coventry","Sunderland",null,null],[9,"Hull","Ipswich",null,null],[9,"Man City","Brighton",null,null],[9,"Spurs","Crystal Palace",null,null],[9,"Aston Villa","Fulham",null,null],[9,"Liverpool","Arsenal",null,null],[9,"Newcastle","Everton",null,null],
+[10,"Arsenal","Hull",null,null],[10,"Brighton","Brentford",null,null],[10,"Crystal Palace","Liverpool",null,null],[10,"Everton","Coventry",null,null],[10,"Fulham","Newcastle",null,null],[10,"Ipswich","Bournemouth",null,null],[10,"Leeds","Spurs",null,null],[10,"Man Utd","Aston Villa",null,null],[10,"Nott'm Forest","Man City",null,null],[10,"Sunderland","Chelsea",null,null],
+[11,"Bournemouth","Nott'm Forest",null,null],[11,"Aston Villa","Sunderland",null,null],[11,"Brentford","Everton",null,null],[11,"Chelsea","Leeds",null,null],[11,"Coventry","Crystal Palace",null,null],[11,"Hull","Brighton",null,null],[11,"Liverpool","Man Utd",null,null],[11,"Man City","Fulham",null,null],[11,"Newcastle","Arsenal",null,null],[11,"Spurs","Ipswich",null,null],
+[12,"Arsenal","Man City",null,null],[12,"Brighton","Newcastle",null,null],[12,"Crystal Palace","Hull",null,null],[12,"Everton","Liverpool",null,null],[12,"Fulham","Bournemouth",null,null],[12,"Ipswich","Aston Villa",null,null],[12,"Leeds","Coventry",null,null],[12,"Man Utd","Brentford",null,null],[12,"Nott'm Forest","Chelsea",null,null],[12,"Sunderland","Spurs",null,null],
+[13,"Bournemouth","Brighton",null,null],[13,"Aston Villa","Everton",null,null],[13,"Brentford","Arsenal",null,null],[13,"Chelsea","Crystal Palace",null,null],[13,"Coventry","Ipswich",null,null],[13,"Hull","Nott'm Forest",null,null],[13,"Liverpool","Sunderland",null,null],[13,"Man City","Leeds",null,null],[13,"Newcastle","Man Utd",null,null],[13,"Spurs","Fulham",null,null],
+[14,"Bournemouth","Hull",null,null],[14,"Aston Villa","Crystal Palace",null,null],[14,"Brentford","Man City",null,null],[14,"Chelsea","Liverpool",null,null],[14,"Everton","Fulham",null,null],[14,"Leeds","Ipswich",null,null],[14,"Man Utd","Coventry",null,null],[14,"Newcastle","Sunderland",null,null],[14,"Nott'm Forest","Brighton",null,null],[14,"Spurs","Arsenal",null,null],
+[15,"Arsenal","Bournemouth",null,null],[15,"Brighton","Everton",null,null],[15,"Coventry","Aston Villa",null,null],[15,"Crystal Palace","Man Utd",null,null],[15,"Fulham","Brentford",null,null],[15,"Hull","Spurs",null,null],[15,"Ipswich","Newcastle",null,null],[15,"Liverpool","Leeds",null,null],[15,"Man City","Chelsea",null,null],[15,"Sunderland","Nott'm Forest",null,null],
+[16,"Bournemouth","Coventry",null,null],[16,"Arsenal","Man Utd",null,null],[16,"Brentford","Newcastle",null,null],[16,"Brighton","Ipswich",null,null],[16,"Chelsea","Aston Villa",null,null],[16,"Leeds","Fulham",null,null],[16,"Liverpool","Spurs",null,null],[16,"Man City","Hull",null,null],[16,"Nott'm Forest","Everton",null,null],[16,"Sunderland","Crystal Palace",null,null],
+[17,"Aston Villa","Leeds",null,null],[17,"Coventry","Chelsea",null,null],[17,"Crystal Palace","Arsenal",null,null],[17,"Everton","Sunderland",null,null],[17,"Fulham","Brighton",null,null],[17,"Hull","Liverpool",null,null],[17,"Ipswich","Brentford",null,null],[17,"Man Utd","Nott'm Forest",null,null],[17,"Newcastle","Man City",null,null],[17,"Spurs","Bournemouth",null,null],
+[18,"Aston Villa","Liverpool",null,null],[18,"Coventry","Brentford",null,null],[18,"Crystal Palace","Bournemouth",null,null],[18,"Everton","Man City",null,null],[18,"Fulham","Arsenal",null,null],[18,"Hull","Leeds",null,null],[18,"Ipswich","Chelsea",null,null],[18,"Man Utd","Sunderland",null,null],[18,"Newcastle","Nott'm Forest",null,null],[18,"Spurs","Brighton",null,null],
+[19,"Bournemouth","Aston Villa",null,null],[19,"Arsenal","Ipswich",null,null],[19,"Brentford","Crystal Palace",null,null],[19,"Brighton","Man Utd",null,null],[19,"Chelsea","Newcastle",null,null],[19,"Leeds","Everton",null,null],[19,"Liverpool","Coventry",null,null],[19,"Man City","Spurs",null,null],[19,"Nott'm Forest","Fulham",null,null],[19,"Sunderland","Hull",null,null],
+[20,"Arsenal","Brentford",null,null],[20,"Brighton","Bournemouth",null,null],[20,"Crystal Palace","Chelsea",null,null],[20,"Everton","Aston Villa",null,null],[20,"Fulham","Spurs",null,null],[20,"Ipswich","Coventry",null,null],[20,"Leeds","Man City",null,null],[20,"Man Utd","Newcastle",null,null],[20,"Nott'm Forest","Hull",null,null],[20,"Sunderland","Liverpool",null,null],
+[21,"Bournemouth","Ipswich",null,null],[21,"Aston Villa","Man Utd",null,null],[21,"Brentford","Brighton",null,null],[21,"Chelsea","Sunderland",null,null],[21,"Coventry","Everton",null,null],[21,"Hull","Arsenal",null,null],[21,"Liverpool","Crystal Palace",null,null],[21,"Man City","Nott'm Forest",null,null],[21,"Newcastle","Fulham",null,null],[21,"Spurs","Leeds",null,null],
+[22,"Arsenal","Newcastle",null,null],[22,"Brighton","Man City",null,null],[22,"Crystal Palace","Spurs",null,null],[22,"Everton","Brentford",null,null],[22,"Fulham","Aston Villa",null,null],[22,"Ipswich","Hull",null,null],[22,"Leeds","Chelsea",null,null],[22,"Man Utd","Liverpool",null,null],[22,"Nott'm Forest","Bournemouth",null,null],[22,"Sunderland","Coventry",null,null],
+[23,"Bournemouth","Fulham",null,null],[23,"Aston Villa","Ipswich",null,null],[23,"Brentford","Man Utd",null,null],[23,"Chelsea","Nott'm Forest",null,null],[23,"Coventry","Leeds",null,null],[23,"Hull","Crystal Palace",null,null],[23,"Liverpool","Everton",null,null],[23,"Man City","Arsenal",null,null],[23,"Newcastle","Brighton",null,null],[23,"Spurs","Sunderland",null,null],
+[24,"Arsenal","Liverpool",null,null],[24,"Brighton","Hull",null,null],[24,"Crystal Palace","Coventry",null,null],[24,"Everton","Newcastle",null,null],[24,"Fulham","Man City",null,null],[24,"Ipswich","Spurs",null,null],[24,"Leeds","Bournemouth",null,null],[24,"Man Utd","Chelsea",null,null],[24,"Nott'm Forest","Brentford",null,null],[24,"Sunderland","Aston Villa",null,null],
+[25,"Aston Villa","Bournemouth",null,null],[25,"Coventry","Liverpool",null,null],[25,"Crystal Palace","Brentford",null,null],[25,"Everton","Leeds",null,null],[25,"Fulham","Nott'm Forest",null,null],[25,"Hull","Sunderland",null,null],[25,"Ipswich","Arsenal",null,null],[25,"Man Utd","Brighton",null,null],[25,"Newcastle","Chelsea",null,null],[25,"Spurs","Man City",null,null],
+[26,"Bournemouth","Crystal Palace",null,null],[26,"Arsenal","Fulham",null,null],[26,"Brentford","Coventry",null,null],[26,"Brighton","Spurs",null,null],[26,"Chelsea","Ipswich",null,null],[26,"Leeds","Aston Villa",null,null],[26,"Liverpool","Hull",null,null],[26,"Man City","Newcastle",null,null],[26,"Nott'm Forest","Man Utd",null,null],[26,"Sunderland","Everton",null,null],
+[27,"Aston Villa","Chelsea",null,null],[27,"Coventry","Bournemouth",null,null],[27,"Crystal Palace","Sunderland",null,null],[27,"Everton","Nott'm Forest",null,null],[27,"Fulham","Leeds",null,null],[27,"Hull","Man City",null,null],[27,"Ipswich","Brighton",null,null],[27,"Man Utd","Arsenal",null,null],[27,"Newcastle","Brentford",null,null],[27,"Spurs","Liverpool",null,null],
+[28,"Bournemouth","Spurs",null,null],[28,"Arsenal","Crystal Palace",null,null],[28,"Brentford","Ipswich",null,null],[28,"Brighton","Fulham",null,null],[28,"Chelsea","Coventry",null,null],[28,"Leeds","Hull",null,null],[28,"Liverpool","Aston Villa",null,null],[28,"Man City","Everton",null,null],[28,"Nott'm Forest","Newcastle",null,null],[28,"Sunderland","Man Utd",null,null],
+[29,"Bournemouth","Newcastle",null,null],[29,"Aston Villa","Hull",null,null],[29,"Chelsea","Arsenal",null,null],[29,"Coventry","Man City",null,null],[29,"Crystal Palace","Fulham",null,null],[29,"Leeds","Brighton",null,null],[29,"Liverpool","Ipswich",null,null],[29,"Man Utd","Everton",null,null],[29,"Sunderland","Brentford",null,null],[29,"Spurs","Nott'm Forest",null,null],
+[30,"Arsenal","Sunderland",null,null],[30,"Brentford","Bournemouth",null,null],[30,"Brighton","Coventry",null,null],[30,"Everton","Spurs",null,null],[30,"Fulham","Liverpool",null,null],[30,"Hull","Chelsea",null,null],[30,"Ipswich","Crystal Palace",null,null],[30,"Man City","Man Utd",null,null],[30,"Newcastle","Leeds",null,null],[30,"Nott'm Forest","Aston Villa",null,null],
+[31,"Bournemouth","Man City",null,null],[31,"Aston Villa","Brighton",null,null],[31,"Chelsea","Fulham",null,null],[31,"Coventry","Arsenal",null,null],[31,"Crystal Palace","Everton",null,null],[31,"Leeds","Nott'm Forest",null,null],[31,"Liverpool","Newcastle",null,null],[31,"Man Utd","Hull",null,null],[31,"Sunderland","Ipswich",null,null],[31,"Spurs","Brentford",null,null],
+[32,"Arsenal","Aston Villa",null,null],[32,"Brentford","Leeds",null,null],[32,"Brighton","Chelsea",null,null],[32,"Everton","Bournemouth",null,null],[32,"Fulham","Sunderland",null,null],[32,"Hull","Coventry",null,null],[32,"Ipswich","Man Utd",null,null],[32,"Man City","Crystal Palace",null,null],[32,"Newcastle","Spurs",null,null],[32,"Nott'm Forest","Liverpool",null,null],
+[33,"Bournemouth","Arsenal",null,null],[33,"Aston Villa","Coventry",null,null],[33,"Brentford","Fulham",null,null],[33,"Chelsea","Man City",null,null],[33,"Everton","Brighton",null,null],[33,"Leeds","Liverpool",null,null],[33,"Man Utd","Crystal Palace",null,null],[33,"Newcastle","Ipswich",null,null],[33,"Nott'm Forest","Sunderland",null,null],[33,"Spurs","Hull",null,null],
+[34,"Arsenal","Spurs",null,null],[34,"Brighton","Nott'm Forest",null,null],[34,"Coventry","Man Utd",null,null],[34,"Crystal Palace","Aston Villa",null,null],[34,"Fulham","Everton",null,null],[34,"Hull","Bournemouth",null,null],[34,"Ipswich","Leeds",null,null],[34,"Liverpool","Chelsea",null,null],[34,"Man City","Brentford",null,null],[34,"Sunderland","Newcastle",null,null],
+[35,"Bournemouth","Man Utd",null,null],[35,"Brentford","Aston Villa",null,null],[35,"Brighton","Sunderland",null,null],[35,"Everton","Hull",null,null],[35,"Fulham","Ipswich",null,null],[35,"Leeds","Arsenal",null,null],[35,"Man City","Liverpool",null,null],[35,"Newcastle","Coventry",null,null],[35,"Nott'm Forest","Crystal Palace",null,null],[35,"Spurs","Chelsea",null,null],
+[36,"Arsenal","Nott'm Forest",null,null],[36,"Aston Villa","Newcastle",null,null],[36,"Chelsea","Everton",null,null],[36,"Coventry","Spurs",null,null],[36,"Crystal Palace","Brighton",null,null],[36,"Hull","Fulham",null,null],[36,"Ipswich","Man City",null,null],[36,"Liverpool","Brentford",null,null],[36,"Man Utd","Leeds",null,null],[36,"Sunderland","Bournemouth",null,null],
+[37,"Bournemouth","Chelsea",null,null],[37,"Brentford","Hull",null,null],[37,"Brighton","Liverpool",null,null],[37,"Everton","Arsenal",null,null],[37,"Fulham","Coventry",null,null],[37,"Leeds","Sunderland",null,null],[37,"Man City","Aston Villa",null,null],[37,"Newcastle","Crystal Palace",null,null],[37,"Nott'm Forest","Ipswich",null,null],[37,"Spurs","Man Utd",null,null],
+[38,"Arsenal","Brighton",null,null],[38,"Aston Villa","Spurs",null,null],[38,"Chelsea","Brentford",null,null],[38,"Coventry","Nott'm Forest",null,null],[38,"Crystal Palace","Leeds",null,null],[38,"Hull","Newcastle",null,null],[38,"Ipswich","Everton",null,null],[38,"Liverpool","Bournemouth",null,null],[38,"Man Utd","Fulham",null,null],[38,"Sunderland","Man City",null,null]
+];
+
+const LIGA_FIXTURES = [
+[1,"Alaves","Getafe",3,0],[1,"Sevilla","Rayo",2,1],[1,"Racing","Villarreal",2,2],[1,"Espanyol","Levante",3,0],[1,"Depor","Elche",1,1],[1,"Atletico","Malaga",2,0],[1,"Valencia","Betis",0,1],[1,"RealMadrid","Sociedad",4,1],[1,"Celta","Osasuna",1,2],[1,"Barcelona","Athletic",2,0],
+[2,"Rayo","Alaves",1,1],[2,"Betis","Sociedad",1,0],[2,"Athletic","Sevilla",1,3],[2,"Valencia","Celta",0,0],[2,"Espanyol","RealMadrid",1,2],[2,"Atletico","Villarreal",2,2],[2,"Getafe","Racing",1,0],[2,"Elche","Barcelona",0,5],[2,"Osasuna","Levante",0,0],[2,"Malaga","Depor",1,1],
+[3,"Racing","Elche",3,2],[3,"Alaves","Villarreal",1,0],[3,"Levante","Betis",5,2],[3,"Sociedad","Espanyol",2,1],[3,"Sevilla","Atletico",1,3],[3,"RealMadrid","Malaga",4,0],[3,"Depor","Valencia",3,1],[3,"Celta","Athletic",0,2],[3,"Osasuna","Getafe",1,0],[3,"Barcelona","Rayo",5,2],
+[4,"Betis","RealMadrid",null,null],[4,"Athletic","Atletico",null,null],[4,"Rayo","Racing",null,null],[4,"Villarreal","Depor",null,null],[4,"Valencia","Barcelona",null,null],[4,"Alaves","Osasuna",null,null],[4,"Malaga","Levante",null,null],[4,"Espanyol","Sevilla",null,null],[4,"Getafe","Celta",null,null],[4,"Elche","Sociedad",null,null],
+[5,"Sevilla","Valencia",null,null],[5,"Racing","Alaves",null,null],[5,"Osasuna","Espanyol",null,null],[5,"Athletic","Elche",null,null],[5,"RealMadrid","Rayo",null,null],[5,"Celta","Malaga",null,null],[5,"Levante","Barcelona",null,null],[5,"Getafe","Depor",null,null],[5,"Sociedad","Atletico",null,null],[5,"Villarreal","Betis",null,null],
+[6,"Sociedad","Celta",0,0],[6,"Rayo","Espanyol",null,null],[6,"Alaves","Valencia",null,null],[6,"Elche","RealMadrid",null,null],[6,"Atletico","Osasuna",null,null],[6,"Depor","Sevilla",null,null],[6,"Barcelona","Racing",null,null],[6,"Levante","Athletic",null,null],[6,"Betis","Getafe",null,null],[6,"Malaga","Villarreal",null,null],
+[7,"Espanyol","Elche",null,null],[7,"Osasuna","Rayo",null,null],[7,"Athletic","Alaves",null,null],[7,"Celta","Racing",null,null],[7,"Sevilla","Barcelona",null,null],[7,"Getafe","Malaga",null,null],[7,"Atletico","RealMadrid",null,null],[7,"Depor","Betis",null,null],[7,"Villarreal","Levante",null,null],[7,"Valencia","Sociedad",null,null],
+[8,"Alaves","Atletico",null,null],[8,"Betis","Osasuna",null,null],[8,"Elche","Celta",null,null],[8,"Barcelona","Getafe",null,null],[8,"Levante","Sevilla",null,null],[8,"Malaga","Espanyol",null,null],[8,"Racing","Valencia",null,null],[8,"Rayo","Athletic",null,null],[8,"RealMadrid","Villarreal",null,null],[8,"Sociedad","Depor",null,null],
+[9,"Betis","Barcelona",null,null],[9,"Celta","Alaves",null,null],[9,"Depor","Levante",null,null],[9,"Espanyol","Atletico",null,null],[9,"Getafe","Rayo",null,null],[9,"Malaga","Sociedad",null,null],[9,"Osasuna","Racing",null,null],[9,"RealMadrid","Sevilla",null,null],[9,"Valencia","Athletic",null,null],[9,"Villarreal","Elche",null,null],
+[10,"Alaves","Malaga",null,null],[10,"Athletic","Getafe",null,null],[10,"Atletico","Depor",null,null],[10,"Celta","Betis",null,null],[10,"Racing","Espanyol",null,null],[10,"Rayo","Elche",null,null],[10,"Sociedad","Levante",null,null],[10,"Sevilla","Osasuna",null,null],[10,"Valencia","Villarreal",null,null],[10,"Barcelona","RealMadrid",null,null],
+[11,"Athletic","Sociedad",null,null],[11,"Betis","Malaga",null,null],[11,"Depor","Osasuna",null,null],[11,"Elche","Valencia",null,null],[11,"Barcelona","Alaves",null,null],[11,"Getafe","Sevilla",null,null],[11,"Levante","Atletico",null,null],[11,"Racing","RealMadrid",null,null],[11,"Rayo","Celta",null,null],[11,"Villarreal","Espanyol",null,null],
+[12,"Atletico","Barcelona",null,null],[12,"Celta","Levante",null,null],[12,"Elche","Betis",null,null],[12,"Espanyol","Depor",null,null],[12,"Malaga","Racing",null,null],[12,"Osasuna","Athletic",null,null],[12,"Sociedad","Rayo",null,null],[12,"Sevilla","Alaves",null,null],[12,"Valencia","RealMadrid",null,null],[12,"Villarreal","Getafe",null,null],
+[13,"Alaves","Depor",null,null],[13,"Athletic","Espanyol",null,null],[13,"Barcelona","Villarreal",null,null],[13,"Getafe","Atletico",null,null],[13,"Levante","Elche",null,null],[13,"Osasuna","Malaga",null,null],[13,"Racing","Sociedad",null,null],[13,"Rayo","Valencia",null,null],[13,"RealMadrid","Celta",null,null],[13,"Sevilla","Betis",null,null],
+[14,"Betis","Rayo",null,null],[14,"Celta","Villarreal",null,null],[14,"Depor","Barcelona",null,null],[14,"Elche","Atletico",null,null],[14,"Espanyol","Getafe",null,null],[14,"Levante","Racing",null,null],[14,"Malaga","Athletic",null,null],[14,"RealMadrid","Alaves",null,null],[14,"Sociedad","Sevilla",null,null],[14,"Valencia","Osasuna",null,null],
+[15,"Alaves","Espanyol",null,null],[15,"Athletic","RealMadrid",null,null],[15,"Atletico","Betis",null,null],[15,"Barcelona","Celta",null,null],[15,"Getafe","Valencia",null,null],[15,"Osasuna","Elche",null,null],[15,"Racing","Depor",null,null],[15,"Rayo","Levante",null,null],[15,"Sevilla","Malaga",null,null],[15,"Villarreal","Sociedad",null,null],
+[16,"Atletico","Valencia",null,null],[16,"Betis","Racing",null,null],[16,"Depor","Athletic",null,null],[16,"Elche","Sevilla",null,null],[16,"Espanyol","Celta",null,null],[16,"Levante","Alaves",null,null],[16,"Malaga","Barcelona",null,null],[16,"RealMadrid","Osasuna",null,null],[16,"Sociedad","Getafe",null,null],[16,"Villarreal","Rayo",null,null],
+[17,"Alaves","Elche",null,null],[17,"Athletic","Betis",null,null],[17,"Celta","Atletico",null,null],[17,"Depor","RealMadrid",null,null],[17,"Barcelona","Sociedad",null,null],[17,"Getafe","Levante",null,null],[17,"Osasuna","Villarreal",null,null],[17,"Rayo","Malaga",null,null],[17,"Sevilla","Racing",null,null],[17,"Valencia","Espanyol",null,null],
+[18,"Betis","Alaves",null,null],[18,"Celta","Depor",null,null],[18,"Espanyol","Barcelona",null,null],[18,"Levante","Valencia",null,null],[18,"Malaga","Elche",null,null],[18,"Racing","Athletic",null,null],[18,"Rayo","Atletico",null,null],[18,"RealMadrid","Getafe",null,null],[18,"Sociedad","Osasuna",null,null],[18,"Villarreal","Sevilla",null,null],
+[19,"Alaves","Sociedad",null,null],[19,"Athletic","Villarreal",null,null],[19,"Atletico","Racing",null,null],[19,"Depor","Rayo",null,null],[19,"Elche","Getafe",null,null],[19,"Espanyol","Betis",null,null],[19,"Osasuna","Barcelona",null,null],[19,"RealMadrid","Levante",null,null],[19,"Sevilla","Celta",null,null],[19,"Valencia","Malaga",null,null],
+[20,"Atletico","Sociedad",null,null],[20,"Betis","Depor",null,null],[20,"Celta","Valencia",null,null],[20,"Barcelona","Elche",null,null],[20,"Getafe","Athletic",null,null],[20,"Levante","Espanyol",null,null],[20,"Malaga","RealMadrid",null,null],[20,"Racing","Osasuna",null,null],[20,"Rayo","Sevilla",null,null],[20,"Villarreal","Alaves",null,null],
+[21,"Alaves","Barcelona",null,null],[21,"Athletic","Levante",null,null],[21,"Depor","Atletico",null,null],[21,"Elche","Rayo",null,null],[21,"Espanyol","Villarreal",null,null],[21,"Getafe","Osasuna",null,null],[21,"Racing","Celta",null,null],[21,"RealMadrid","Betis",null,null],[21,"Sociedad","Malaga",null,null],[21,"Valencia","Sevilla",null,null],
+[22,"Atletico","Espanyol",null,null],[22,"Betis","Elche",null,null],[22,"Celta","Getafe",null,null],[22,"Barcelona","Valencia",null,null],[22,"Levante","Sociedad",null,null],[22,"Malaga","Alaves",null,null],[22,"Osasuna","Depor",null,null],[22,"Rayo","RealMadrid",null,null],[22,"Sevilla","Athletic",null,null],[22,"Villarreal","Racing",null,null],
+[23,"Alaves","Celta",null,null],[23,"Athletic","Osasuna",null,null],[23,"Betis","Sevilla",null,null],[23,"Depor","Malaga",null,null],[23,"Elche","Levante",null,null],[23,"Espanyol","Rayo",null,null],[23,"Barcelona","Atletico",null,null],[23,"Getafe","Villarreal",null,null],[23,"Sociedad","RealMadrid",null,null],[23,"Valencia","Racing",null,null],
+[24,"Celta","Rayo",null,null],[24,"Elche","Depor",null,null],[24,"Levante","Malaga",null,null],[24,"Osasuna","Atletico",null,null],[24,"Racing","Getafe",null,null],[24,"RealMadrid","Athletic",null,null],[24,"Sociedad","Betis",null,null],[24,"Sevilla","Espanyol",null,null],[24,"Valencia","Alaves",null,null],[24,"Villarreal","Barcelona",null,null],
+[25,"Alaves","Racing",null,null],[25,"Athletic","Celta",null,null],[25,"Atletico","Elche",null,null],[25,"Depor","Sociedad",null,null],[25,"Espanyol","Osasuna",null,null],[25,"Barcelona","Levante",null,null],[25,"Malaga","Betis",null,null],[25,"Rayo","Getafe",null,null],[25,"Sevilla","RealMadrid",null,null],[25,"Villarreal","Valencia",null,null],
+[26,"Athletic","Barcelona",null,null],[26,"Betis","Villarreal",null,null],[26,"Celta","Espanyol",null,null],[26,"Getafe","Alaves",null,null],[26,"Levante","Depor",null,null],[26,"Malaga","Atletico",null,null],[26,"Osasuna","Sevilla",null,null],[26,"Racing","Rayo",null,null],[26,"RealMadrid","Valencia",null,null],[26,"Sociedad","Elche",null,null],
+[27,"Alaves","Athletic",null,null],[27,"Atletico","Celta",null,null],[27,"Depor","Getafe",null,null],[27,"Elche","Malaga",null,null],[27,"Espanyol","Racing",null,null],[27,"Barcelona","Betis",null,null],[27,"Rayo","Osasuna",null,null],[27,"Sevilla","Sociedad",null,null],[27,"Valencia","Levante",null,null],[27,"Villarreal","RealMadrid",null,null],
+[28,"Alaves","Sevilla",null,null],[28,"Athletic","Valencia",null,null],[28,"Betis","Levante",null,null],[28,"Elche","Villarreal",null,null],[28,"Barcelona","Depor",null,null],[28,"Getafe","Sociedad",null,null],[28,"Malaga","Rayo",null,null],[28,"Osasuna","Celta",null,null],[28,"Racing","Atletico",null,null],[28,"RealMadrid","Espanyol",null,null],
+[29,"Atletico","Getafe",null,null],[29,"Celta","RealMadrid",null,null],[29,"Espanyol","Athletic",null,null],[29,"Levante","Osasuna",null,null],[29,"Racing","Betis",null,null],[29,"Rayo","Barcelona",null,null],[29,"Sociedad","Alaves",null,null],[29,"Sevilla","Elche",null,null],[29,"Valencia","Depor",null,null],[29,"Villarreal","Malaga",null,null],
+[30,"Athletic","Racing",null,null],[30,"Betis","Celta",null,null],[30,"Depor","Villarreal",null,null],[30,"Elche","Alaves",null,null],[30,"Barcelona","Sevilla",null,null],[30,"Getafe","Espanyol",null,null],[30,"Levante","Rayo",null,null],[30,"Malaga","Osasuna",null,null],[30,"RealMadrid","Atletico",null,null],[30,"Sociedad","Valencia",null,null],
+[31,"Alaves","Betis",null,null],[31,"Atletico","Levante",null,null],[31,"Celta","Elche",null,null],[31,"Espanyol","Malaga",null,null],[31,"Osasuna","RealMadrid",null,null],[31,"Racing","Barcelona",null,null],[31,"Rayo","Sociedad",null,null],[31,"Sevilla","Depor",null,null],[31,"Valencia","Getafe",null,null],[31,"Villarreal","Athletic",null,null],
+[32,"Alaves","Rayo",null,null],[32,"Atletico","Sevilla",null,null],[32,"Betis","Athletic",null,null],[32,"Depor","Celta",null,null],[32,"Elche","Osasuna",null,null],[32,"Barcelona","Espanyol",null,null],[32,"Getafe","RealMadrid",null,null],[32,"Levante","Villarreal",null,null],[32,"Malaga","Valencia",null,null],[32,"Sociedad","Racing",null,null],
+[33,"Athletic","Depor",null,null],[33,"Celta","Barcelona",null,null],[33,"Espanyol","Sociedad",null,null],[33,"Getafe","Betis",null,null],[33,"Osasuna","Alaves",null,null],[33,"Racing","Malaga",null,null],[33,"RealMadrid","Elche",null,null],[33,"Sevilla","Levante",null,null],[33,"Valencia","Rayo",null,null],[33,"Villarreal","Atletico",null,null],
+[34,"Atletico","Alaves",null,null],[34,"Betis","Valencia",null,null],[34,"Celta","Sevilla",null,null],[34,"Depor","Racing",null,null],[34,"Elche","Espanyol",null,null],[34,"Barcelona","Osasuna",null,null],[34,"Levante","RealMadrid",null,null],[34,"Malaga","Getafe",null,null],[34,"Rayo","Villarreal",null,null],[34,"Sociedad","Athletic",null,null],
+[35,"Alaves","Levante",null,null],[35,"Athletic","Malaga",null,null],[35,"Betis","Espanyol",null,null],[35,"Getafe","Elche",null,null],[35,"Osasuna","Sociedad",null,null],[35,"Racing","Sevilla",null,null],[35,"Rayo","Depor",null,null],[35,"RealMadrid","Barcelona",null,null],[35,"Valencia","Atletico",null,null],[35,"Villarreal","Celta",null,null],
+[36,"Atletico","Rayo",null,null],[36,"Depor","Alaves",null,null],[36,"Elche","Athletic",null,null],[36,"Espanyol","Valencia",null,null],[36,"Levante","Getafe",null,null],[36,"Malaga","Celta",null,null],[36,"Osasuna","Betis",null,null],[36,"RealMadrid","Racing",null,null],[36,"Sociedad","Barcelona",null,null],[36,"Sevilla","Villarreal",null,null],
+[37,"Alaves","RealMadrid",null,null],[37,"Atletico","Athletic",null,null],[37,"Celta","Sociedad",null,null],[37,"Depor","Espanyol",null,null],[37,"Barcelona","Malaga",null,null],[37,"Racing","Levante",null,null],[37,"Rayo","Betis",null,null],[37,"Sevilla","Getafe",null,null],[37,"Valencia","Elche",null,null],[37,"Villarreal","Osasuna",null,null],
+[38,"Athletic","Rayo",null,null],[38,"Betis","Atletico",null,null],[38,"Elche","Racing",null,null],[38,"Espanyol","Alaves",null,null],[38,"Getafe","Barcelona",null,null],[38,"Levante","Celta",null,null],[38,"Malaga","Sevilla",null,null],[38,"Osasuna","Valencia",null,null],[38,"RealMadrid","Depor",null,null],[38,"Sociedad","Villarreal",null,null]
+];
+
+const BL_FIXTURES = [
+[1,"Bayern","Stuttgart",5,1],[1,"Elversberg","Leverkusen",3,2],[1,"Koln","Hoffenheim",3,2],[1,"UnionBerlin","Frankfurt",3,3],[1,"Mainz","Paderborn",0,0],[1,"Leipzig","Gladbach",3,0],[1,"Dortmund","Hamburg",2,0],[1,"Freiburg","Bremen",4,1],[1,"Augsburg","Schalke",3,0],
+[2,"Stuttgart","Koln",null,null],[2,"Paderborn","Freiburg",null,null],[2,"Bremen","Leipzig",null,null],[2,"Gladbach","Elversberg",null,null],[2,"Leverkusen","UnionBerlin",null,null],[2,"Hoffenheim","Dortmund",null,null],[2,"Schalke","Bayern",null,null],[2,"Hamburg","Mainz",null,null],[2,"Frankfurt","Augsburg",null,null],
+[3,"UnionBerlin","Schalke",null,null],[3,"Mainz","Frankfurt",null,null],[3,"Augsburg","Leverkusen",null,null],[3,"Freiburg","Gladbach",null,null],[3,"Hoffenheim","Stuttgart",null,null],[3,"Dortmund","Paderborn",null,null],[3,"Koln","Bremen",null,null],[3,"Leipzig","Hamburg",null,null],[3,"Elversberg","Bayern",null,null],
+[4,"Bayern","UnionBerlin",null,null],[4,"Bremen","Augsburg",null,null],[4,"Hamburg","Koln",null,null],[4,"Gladbach","Mainz",null,null],[4,"Frankfurt","Freiburg",null,null],[4,"Stuttgart","Dortmund",null,null],[4,"Leverkusen","Leipzig",null,null],[4,"Schalke","Elversberg",null,null],[4,"Paderborn","Hoffenheim",null,null],
+[5,"Paderborn","Stuttgart",null,null],[5,"Koln","Gladbach",null,null],[5,"UnionBerlin","Elversberg",null,null],[5,"Mainz","Leverkusen",null,null],[5,"Augsburg","Bayern",null,null],[5,"Freiburg","Schalke",null,null],[5,"Hoffenheim","Hamburg",null,null],[5,"Leipzig","Frankfurt",null,null],[5,"Dortmund","Bremen",null,null],
+[6,"Elversberg","Augsburg",null,null],[6,"Schalke","Mainz",null,null],[6,"Bremen","Paderborn",null,null],[6,"Hamburg","Stuttgart",null,null],[6,"Gladbach","Hoffenheim",null,null],[6,"UnionBerlin","Dortmund",null,null],[6,"Frankfurt","Koln",null,null],[6,"Leverkusen","Freiburg",null,null],[6,"Bayern","Leipzig",null,null],
+[7,"Paderborn","Hamburg",null,null],[7,"Koln","Schalke",null,null],[7,"Mainz","Bremen",null,null],[7,"Augsburg","UnionBerlin",null,null],[7,"Freiburg","Bayern",null,null],[7,"Hoffenheim","Leverkusen",null,null],[7,"Stuttgart","Gladbach",null,null],[7,"Leipzig","Elversberg",null,null],[7,"Dortmund","Frankfurt",null,null],
+[8,"Elversberg","Mainz",null,null],[8,"Schalke","Leipzig",null,null],[8,"Bremen","Hoffenheim",null,null],[8,"Gladbach","Paderborn",null,null],[8,"UnionBerlin","Koln",null,null],[8,"Augsburg","Freiburg",null,null],[8,"Frankfurt","Hamburg",null,null],[8,"Leverkusen","Stuttgart",null,null],[8,"Bayern","Dortmund",null,null],
+[9,"Paderborn","Frankfurt",null,null],[9,"Koln","Leverkusen",null,null],[9,"Hamburg","Gladbach",null,null],[9,"Mainz","Bayern",null,null],[9,"Freiburg","UnionBerlin",null,null],[9,"Hoffenheim","Schalke",null,null],[9,"Stuttgart","Bremen",null,null],[9,"Leipzig","Augsburg",null,null],[9,"Dortmund","Elversberg",null,null],
+[10,"Elversberg","Freiburg",null,null],[10,"Schalke","Stuttgart",null,null],[10,"Bremen","Hamburg",null,null],[10,"Gladbach","Dortmund",null,null],[10,"UnionBerlin","Leipzig",null,null],[10,"Augsburg","Mainz",null,null],[10,"Frankfurt","Hoffenheim",null,null],[10,"Leverkusen","Paderborn",null,null],[10,"Bayern","Koln",null,null],
+[11,"Paderborn","Schalke",null,null],[11,"Bremen","Gladbach",null,null],[11,"Koln","Elversberg",null,null],[11,"Hamburg","Bayern",null,null],[11,"Mainz","UnionBerlin",null,null],[11,"Freiburg","Leipzig",null,null],[11,"Hoffenheim","Augsburg",null,null],[11,"Stuttgart","Frankfurt",null,null],[11,"Dortmund","Leverkusen",null,null],
+[12,"Elversberg","Stuttgart",null,null],[12,"Schalke","Dortmund",null,null],[12,"UnionBerlin","Hamburg",null,null],[12,"Augsburg","Koln",null,null],[12,"Frankfurt","Bremen",null,null],[12,"Freiburg","Hoffenheim",null,null],[12,"Leverkusen","Gladbach",null,null],[12,"Leipzig","Mainz",null,null],[12,"Bayern","Paderborn",null,null],
+[13,"Paderborn","Elversberg",null,null],[13,"Bremen","Leverkusen",null,null],[13,"Koln","Leipzig",null,null],[13,"Hamburg","Schalke",null,null],[13,"Gladbach","Frankfurt",null,null],[13,"Mainz","Freiburg",null,null],[13,"Hoffenheim","Bayern",null,null],[13,"Stuttgart","UnionBerlin",null,null],[13,"Dortmund","Augsburg",null,null],
+[14,"Elversberg","Hamburg",null,null],[14,"Schalke","Gladbach",null,null],[14,"UnionBerlin","Hoffenheim",null,null],[14,"Mainz","Koln",null,null],[14,"Augsburg","Paderborn",null,null],[14,"Freiburg","Stuttgart",null,null],[14,"Leverkusen","Frankfurt",null,null],[14,"Leipzig","Dortmund",null,null],[14,"Bayern","Bremen",null,null],
+[15,"Paderborn","Leipzig",null,null],[15,"Bremen","UnionBerlin",null,null],[15,"Koln","Freiburg",null,null],[15,"Hamburg","Leverkusen",null,null],[15,"Gladbach","Bayern",null,null],[15,"Frankfurt","Schalke",null,null],[15,"Hoffenheim","Elversberg",null,null],[15,"Stuttgart","Augsburg",null,null],[15,"Dortmund","Mainz",null,null],
+[16,"Elversberg","Frankfurt",null,null],[16,"Schalke","Bremen",null,null],[16,"Koln","Dortmund",null,null],[16,"UnionBerlin","Paderborn",null,null],[16,"Mainz","Hoffenheim",null,null],[16,"Augsburg","Gladbach",null,null],[16,"Freiburg","Hamburg",null,null],[16,"Leipzig","Stuttgart",null,null],[16,"Bayern","Leverkusen",null,null],
+[17,"Paderborn","Koln",null,null],[17,"Bremen","Elversberg",null,null],[17,"Hamburg","Augsburg",null,null],[17,"Gladbach","UnionBerlin",null,null],[17,"Frankfurt","Bayern",null,null],[17,"Leverkusen","Schalke",null,null],[17,"Hoffenheim","Leipzig",null,null],[17,"Stuttgart","Mainz",null,null],[17,"Dortmund","Freiburg",null,null],
+[18,"Paderborn","Mainz",null,null],[18,"Schalke","Augsburg",null,null],[18,"Bremen","Freiburg",null,null],[18,"Hamburg","Dortmund",null,null],[18,"Gladbach","Leipzig",null,null],[18,"Frankfurt","UnionBerlin",null,null],[18,"Leverkusen","Elversberg",null,null],[18,"Hoffenheim","Koln",null,null],[18,"Stuttgart","Bayern",null,null],
+[19,"Elversberg","Gladbach",null,null],[19,"Koln","Stuttgart",null,null],[19,"UnionBerlin","Leverkusen",null,null],[19,"Mainz","Hamburg",null,null],[19,"Augsburg","Frankfurt",null,null],[19,"Freiburg","Paderborn",null,null],[19,"Leipzig","Bremen",null,null],[19,"Dortmund","Hoffenheim",null,null],[19,"Bayern","Schalke",null,null],
+[20,"Paderborn","Dortmund",null,null],[20,"Schalke","UnionBerlin",null,null],[20,"Bremen","Koln",null,null],[20,"Hamburg","Leipzig",null,null],[20,"Gladbach","Freiburg",null,null],[20,"Frankfurt","Mainz",null,null],[20,"Leverkusen","Augsburg",null,null],[20,"Stuttgart","Hoffenheim",null,null],[20,"Bayern","Elversberg",null,null],
+[21,"Elversberg","Schalke",null,null],[21,"Koln","Hamburg",null,null],[21,"UnionBerlin","Bayern",null,null],[21,"Mainz","Gladbach",null,null],[21,"Augsburg","Bremen",null,null],[21,"Freiburg","Frankfurt",null,null],[21,"Hoffenheim","Paderborn",null,null],[21,"Leipzig","Leverkusen",null,null],[21,"Dortmund","Stuttgart",null,null],
+[22,"Elversberg","UnionBerlin",null,null],[22,"Schalke","Freiburg",null,null],[22,"Bremen","Dortmund",null,null],[22,"Hamburg","Hoffenheim",null,null],[22,"Gladbach","Koln",null,null],[22,"Frankfurt","Leipzig",null,null],[22,"Leverkusen","Mainz",null,null],[22,"Stuttgart","Paderborn",null,null],[22,"Bayern","Augsburg",null,null],
+[23,"Paderborn","Bremen",null,null],[23,"Koln","Frankfurt",null,null],[23,"Mainz","Schalke",null,null],[23,"Augsburg","Elversberg",null,null],[23,"Freiburg","Leverkusen",null,null],[23,"Hoffenheim","Gladbach",null,null],[23,"Stuttgart","Hamburg",null,null],[23,"Leipzig","Bayern",null,null],[23,"Dortmund","UnionBerlin",null,null],
+[24,"Elversberg","Leipzig",null,null],[24,"Schalke","Koln",null,null],[24,"Bremen","Mainz",null,null],[24,"Hamburg","Paderborn",null,null],[24,"Gladbach","Stuttgart",null,null],[24,"UnionBerlin","Augsburg",null,null],[24,"Frankfurt","Dortmund",null,null],[24,"Leverkusen","Hoffenheim",null,null],[24,"Bayern","Freiburg",null,null],
+[25,"Paderborn","Gladbach",null,null],[25,"Koln","UnionBerlin",null,null],[25,"Hamburg","Frankfurt",null,null],[25,"Mainz","Elversberg",null,null],[25,"Freiburg","Augsburg",null,null],[25,"Hoffenheim","Bremen",null,null],[25,"Stuttgart","Leverkusen",null,null],[25,"Leipzig","Schalke",null,null],[25,"Dortmund","Bayern",null,null],
+[26,"Elversberg","Dortmund",null,null],[26,"Schalke","Hoffenheim",null,null],[26,"Bremen","Stuttgart",null,null],[26,"Gladbach","Hamburg",null,null],[26,"UnionBerlin","Freiburg",null,null],[26,"Augsburg","Leipzig",null,null],[26,"Frankfurt","Paderborn",null,null],[26,"Leverkusen","Koln",null,null],[26,"Bayern","Mainz",null,null],
+[27,"Paderborn","Leverkusen",null,null],[27,"Koln","Bayern",null,null],[27,"Hamburg","Bremen",null,null],[27,"Mainz","Augsburg",null,null],[27,"Freiburg","Elversberg",null,null],[27,"Hoffenheim","Frankfurt",null,null],[27,"Stuttgart","Schalke",null,null],[27,"Leipzig","UnionBerlin",null,null],[27,"Dortmund","Gladbach",null,null],
+[28,"Elversberg","Koln",null,null],[28,"Schalke","Paderborn",null,null],[28,"Gladbach","Bremen",null,null],[28,"UnionBerlin","Mainz",null,null],[28,"Augsburg","Hoffenheim",null,null],[28,"Frankfurt","Stuttgart",null,null],[28,"Leverkusen","Dortmund",null,null],[28,"Leipzig","Freiburg",null,null],[28,"Bayern","Hamburg",null,null],
+[29,"Paderborn","Bayern",null,null],[29,"Bremen","Frankfurt",null,null],[29,"Koln","Augsburg",null,null],[29,"Hamburg","UnionBerlin",null,null],[29,"Gladbach","Leverkusen",null,null],[29,"Mainz","Leipzig",null,null],[29,"Hoffenheim","Freiburg",null,null],[29,"Stuttgart","Elversberg",null,null],[29,"Dortmund","Schalke",null,null],
+[30,"Elversberg","Paderborn",null,null],[30,"Schalke","Hamburg",null,null],[30,"UnionBerlin","Stuttgart",null,null],[30,"Augsburg","Dortmund",null,null],[30,"Frankfurt","Gladbach",null,null],[30,"Freiburg","Mainz",null,null],[30,"Leverkusen","Bremen",null,null],[30,"Leipzig","Koln",null,null],[30,"Bayern","Hoffenheim",null,null],
+[31,"Paderborn","Augsburg",null,null],[31,"Bremen","Bayern",null,null],[31,"Koln","Mainz",null,null],[31,"Hamburg","Elversberg",null,null],[31,"Gladbach","Schalke",null,null],[31,"Frankfurt","Leverkusen",null,null],[31,"Hoffenheim","UnionBerlin",null,null],[31,"Stuttgart","Freiburg",null,null],[31,"Dortmund","Leipzig",null,null],
+[32,"Elversberg","Hoffenheim",null,null],[32,"Schalke","Frankfurt",null,null],[32,"UnionBerlin","Bremen",null,null],[32,"Mainz","Dortmund",null,null],[32,"Augsburg","Stuttgart",null,null],[32,"Freiburg","Koln",null,null],[32,"Leverkusen","Hamburg",null,null],[32,"Leipzig","Paderborn",null,null],[32,"Bayern","Gladbach",null,null],
+[33,"Paderborn","UnionBerlin",null,null],[33,"Bremen","Schalke",null,null],[33,"Hamburg","Freiburg",null,null],[33,"Gladbach","Augsburg",null,null],[33,"Frankfurt","Elversberg",null,null],[33,"Leverkusen","Bayern",null,null],[33,"Hoffenheim","Mainz",null,null],[33,"Stuttgart","Leipzig",null,null],[33,"Dortmund","Koln",null,null],
+[34,"Elversberg","Bremen",null,null],[34,"Schalke","Leverkusen",null,null],[34,"Koln","Paderborn",null,null],[34,"UnionBerlin","Gladbach",null,null],[34,"Mainz","Stuttgart",null,null],[34,"Augsburg","Hamburg",null,null],[34,"Freiburg","Dortmund",null,null],[34,"Leipzig","Hoffenheim",null,null],[34,"Bayern","Frankfurt",null,null]
+];
+
+// ---------- DATES (DD/MM), same order as fixtures arrays ----------
+const EPL_DATES = [
+"21/08","22/08","22/08","22/08","22/08","22/08","23/08","23/08","23/08","24/08",
+"28/08","29/08","29/08","29/08","29/08","30/08","30/08","30/08","30/08","31/08",
+"04/09","05/09","05/09","05/09","05/09","05/09","05/09","05/09","06/09","06/09",
+"12/09","12/09","12/09","12/09","12/09","12/09","12/09","13/09","13/09","14/09",
+"18/09","19/09","19/09","19/09","19/09","19/09","20/09","20/09","20/09","20/09",
+"10/10","10/10","10/10","10/10","10/10","10/10","11/10","11/10","11/10","12/10",
+"17/10","17/10","17/10","17/10","17/10","18/10","18/10","18/10","18/10","19/10",
+"23/10","24/10","24/10","24/10","24/10","25/10","25/10","25/10","25/10","25/10",
+"31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","01/11","02/11",
+"07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11",
+"21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11",
+"28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11",
+"02/12","02/12","02/12","02/12","02/12","02/12","02/12","02/12","02/12","02/12",
+"05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12",
+"12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12",
+"19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12",
+"26/12","26/12","26/12","26/12","26/12","26/12","26/12","26/12","26/12","26/12",
+"30/12","30/12","30/12","30/12","30/12","30/12","30/12","30/12","30/12","30/12",
+"02/01","02/01","02/01","02/01","02/01","02/01","02/01","02/01","02/01","02/01",
+"06/01","06/01","06/01","06/01","06/01","06/01","06/01","06/01","06/01","06/01",
+"16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01",
+"23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01",
+"30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01",
+"06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02",
+"10/02","10/02","10/02","10/02","10/02","10/02","10/02","10/02","10/02","10/02",
+"20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02",
+"27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02",
+"03/03","03/03","03/03","03/03","03/03","03/03","03/03","03/03","03/03","03/03",
+"13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03",
+"20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03",
+"10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04",
+"17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04",
+"24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04",
+"01/05","01/05","01/05","01/05","01/05","01/05","01/05","01/05","01/05","01/05",
+"08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05",
+"15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05",
+"23/05","23/05","23/05","23/05","23/05","23/05","23/05","23/05","23/05","23/05",
+"30/05","30/05","30/05","30/05","30/05","30/05","30/05","30/05","30/05","30/05"
+];
+
+const LIGA_DATES = [
+"15/08","15/08","16/08","16/08","17/08","19/08","25/08","26/08","27/08","27/08",
+"20/08","21/08","22/08","22/08","22/08","23/08","23/08","23/08","24/08","24/08",
+"28/08","28/08","29/08","29/08","29/08","30/08","30/08","30/08","31/08","31/08",
+"04/09","05/09","05/09","05/09","06/09","06/09","06/09","06/09","07/09","07/09",
+"11/09","12/09","12/09","12/09","12/09","13/09","13/09","13/09","13/09","14/09",
+"03/09","15/09","15/09","15/09","16/09","16/09","16/09","16/09","17/09","17/09",
+"18/09","19/09","19/09","19/09","19/09","20/09","20/09","20/09","20/09","20/09",
+"11/10","11/10","11/10","11/10","11/10","11/10","11/10","11/10","11/10","11/10",
+"18/10","18/10","18/10","18/10","18/10","18/10","18/10","18/10","18/10","18/10",
+"25/10","25/10","25/10","25/10","25/10","25/10","25/10","25/10","25/10","25/10",
+"01/11","01/11","01/11","01/11","01/11","01/11","01/11","01/11","01/11","01/11",
+"08/11","08/11","08/11","08/11","08/11","08/11","08/11","08/11","08/11","08/11",
+"22/11","22/11","22/11","22/11","22/11","22/11","22/11","22/11","22/11","22/11",
+"29/11","29/11","29/11","29/11","29/11","29/11","29/11","29/11","29/11","29/11",
+"06/12","06/12","06/12","06/12","06/12","06/12","06/12","06/12","06/12","06/12",
+"13/12","13/12","13/12","13/12","13/12","13/12","13/12","13/12","13/12","13/12",
+"20/12","20/12","20/12","20/12","20/12","20/12","20/12","20/12","20/12","20/12",
+"03/01","03/01","03/01","03/01","03/01","03/01","03/01","03/01","03/01","03/01",
+"10/01","10/01","10/01","10/01","10/01","10/01","10/01","10/01","10/01","10/01",
+"17/01","17/01","17/01","17/01","17/01","17/01","17/01","17/01","17/01","17/01",
+"24/01","24/01","24/01","24/01","24/01","24/01","24/01","24/01","24/01","24/01",
+"31/01","31/01","31/01","31/01","31/01","31/01","31/01","31/01","31/01","31/01",
+"07/02","07/02","07/02","07/02","07/02","07/02","07/02","07/02","07/02","07/02",
+"14/02","14/02","14/02","14/02","14/02","14/02","14/02","14/02","14/02","14/02",
+"21/02","21/02","21/02","21/02","21/02","21/02","21/02","21/02","21/02","21/02",
+"28/02","28/02","28/02","28/02","28/02","28/02","28/02","28/02","28/02","28/02",
+"07/03","07/03","07/03","07/03","07/03","07/03","07/03","07/03","07/03","07/03",
+"14/03","14/03","14/03","14/03","14/03","14/03","14/03","14/03","14/03","14/03",
+"21/03","21/03","21/03","21/03","21/03","21/03","21/03","21/03","21/03","21/03",
+"04/04","04/04","04/04","04/04","04/04","04/04","04/04","04/04","04/04","04/04",
+"11/04","11/04","11/04","11/04","11/04","11/04","11/04","11/04","11/04","11/04",
+"18/04","18/04","18/04","18/04","18/04","18/04","18/04","18/04","18/04","18/04",
+"21/04","21/04","21/04","21/04","21/04","21/04","21/04","21/04","21/04","21/04",
+"02/05","02/05","02/05","02/05","02/05","02/05","02/05","02/05","02/05","02/05",
+"09/05","09/05","09/05","09/05","09/05","09/05","09/05","09/05","09/05","09/05",
+"16/05","16/05","16/05","16/05","16/05","16/05","16/05","16/05","16/05","16/05",
+"23/05","23/05","23/05","23/05","23/05","23/05","23/05","23/05","23/05","23/05",
+"30/05","30/05","30/05","30/05","30/05","30/05","30/05","30/05","30/05","30/05"
+];
+
+const BL_DATES = [
+"28/08","29/08","29/08","29/08","29/08","29/08","29/08","30/08","30/08",
+"04/09","05/09","05/09","05/09","05/09","05/09","05/09","06/09","06/09",
+"11/09","12/09","12/09","12/09","12/09","12/09","12/09","13/09","13/09",
+"18/09","19/09","19/09","19/09","19/09","19/09","20/09","20/09","20/09",
+"10/10","10/10","10/10","10/10","10/10","10/10","10/10","10/10","10/10",
+"17/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10",
+"24/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10",
+"31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10",
+"07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11",
+"21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11",
+"28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11",
+"05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12",
+"12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12",
+"19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12",
+"09/01","09/01","09/01","09/01","09/01","09/01","09/01","09/01","09/01",
+"12/01","12/01","12/01","12/01","12/01","12/01","12/01","12/01","12/01",
+"16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01",
+"23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01",
+"30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01",
+"06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02",
+"13/02","13/02","13/02","13/02","13/02","13/02","13/02","13/02","13/02",
+"20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02",
+"27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02",
+"02/03","02/03","02/03","02/03","02/03","02/03","02/03","02/03","02/03",
+"06/03","06/03","06/03","06/03","06/03","06/03","06/03","06/03","06/03",
+"13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03",
+"20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03",
+"03/04","03/04","03/04","03/04","03/04","03/04","03/04","03/04","03/04",
+"10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04",
+"17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04",
+"24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04",
+"08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05",
+"15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05",
+"22/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05"
+];
+
+function getDates(league) {
+  if (league === "epl") return EPL_DATES;
+  if (league === "liga") return LIGA_DATES;
+  return BL_DATES;
+}
+
+// ---------- LIVE API MODE (football-data.org, 12 free competitions) ----------
+const API_COMPETITIONS = [
+  {code:"PL", name:"Premier League (Αγγλία)"},
+  {code:"PD", name:"La Liga (Ισπανία)"},
+  {code:"BL1", name:"Bundesliga (Γερμανία)"},
+  {code:"SA", name:"Serie A (Ιταλία)"},
+  {code:"FL1", name:"Ligue 1 (Γαλλία)"},
+  {code:"CL", name:"Champions League"},
+  {code:"DED", name:"Eredivisie (Ολλανδία)"},
+  {code:"PPL", name:"Primeira Liga (Πορτογαλία)"},
+  {code:"ELC", name:"Championship (Αγγλία, Β')"},
+  {code:"BSA", name:"Brasileirão (Βραζιλία)"},
+  {code:"WC", name:"Παγκόσμιο Κύπελλο"},
+  {code:"EC", name:"Euro (Εθνικές Ομάδες)"}
+];
+
+function getApiKey() { return localStorage.getItem("protathlimata_api_key") || ""; }
+function setApiKey(k) { localStorage.setItem("protathlimata_api_key", k); }
+
+async function apiFetch(path) {
+  const key = getApiKey();
+  if (!key) throw new Error("NOKEY");
+  const res = await fetch("https://api.football-data.org/v4" + path, { headers: { "X-Auth-Token": key } });
+  if (res.status === 429) throw new Error("RATE_LIMIT");
+  if (res.status === 403) throw new Error("FORBIDDEN");
+  if (!res.ok) throw new Error("HTTP_" + res.status);
+  return res.json();
+}
+
+let apiCache = {};
+
+async function loadCompetition(code) {
+  const statusEl = document.getElementById("apiStatus");
+  statusEl.textContent = "Φόρτωση...";
+  try {
+    const [standingsData, matchesData] = await Promise.all([
+      apiFetch(`/competitions/${code}/standings`),
+      apiFetch(`/competitions/${code}/matches`)
+    ]);
+    apiCache[code] = { standings: standingsData, matches: matchesData.matches };
+    statusEl.textContent = "Ενημερώθηκε: " + new Date().toLocaleTimeString('el-GR');
+    renderApiView(code);
+  } catch (e) {
+    if (e.message === "NOKEY") statusEl.textContent = "⚠️ Βάλε πρώτα το API key σου και πάτα Αποθήκευση.";
+    else if (e.message === "RATE_LIMIT") statusEl.textContent = "⚠️ Έφτασες το όριο αιτημάτων (10/λεπτό). Δοκίμασε ξανά σε λίγο.";
+    else if (e.message === "FORBIDDEN") statusEl.textContent = "⚠️ Μη έγκυρο API key, ή αυτό το πρωτάθλημα δεν καλύπτεται στο δωρεάν πλάνο σου.";
+    else statusEl.textContent = "⚠️ Σφάλμα σύνδεσης (" + e.message + "). Αν ανοίγεις το αρχείο τοπικά, ίσως χρειάζεται να το φιλοξενήσεις (π.χ. GitHub Pages) λόγω CORS.";
+  }
+}
+
+function renderSimpleSplit(table) {
+  let h = `<table><thead><tr><th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Πόντοι</th></tr></thead><tbody>`;
+  table.forEach((row,i) => {
+    h += `<tr><td>${i+1}</td><td class="team">${row.team.name}</td><td>${row.playedGames}</td><td class="pts">${row.points}</td></tr>`;
+  });
+  h += `</tbody></table>`;
+  return h;
+}
+
+function renderApiView(code) {
+  const cache = apiCache[code];
+  if (!cache) return;
+  const total = cache.standings.standings.find(s=>s.type==="TOTAL");
+  const home = cache.standings.standings.find(s=>s.type==="HOME");
+  const away = cache.standings.standings.find(s=>s.type==="AWAY");
+
+  let html = `<table><thead><tr><th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Ν</th><th>Ι</th><th>Η</th><th>ΓΥ</th><th>ΓΚ</th><th>Δ</th><th>Β</th></tr></thead><tbody>`;
+  (total ? total.table : []).forEach(row => {
+    html += `<tr><td>${row.position}</td><td class="team">${row.team.name}</td><td>${row.playedGames}</td><td>${row.won}</td><td>${row.draw}</td><td>${row.lost}</td><td>${row.goalsFor}</td><td>${row.goalsAgainst}</td><td>${row.goalDifference>0?'+':''}${row.goalDifference}</td><td class="pts">${row.points}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  if (home && away) {
+    html += `<div class="split-wrap">
+      <div><div class="split-title">🏠 Εντός</div>${renderSimpleSplit(home.table)}</div>
+      <div><div class="split-title">✈️ Εκτός</div>${renderSimpleSplit(away.table)}</div>
+    </div>`;
+  }
+  document.getElementById("apiStandings").innerHTML = html;
+
+  // build simple form-weighted attack/defense from finished matches (no prior-season data available generically)
+  const matches = cache.matches;
+  const finished = matches.filter(m => m.status==="FINISHED" && m.score && m.score.fullTime.home!==null)
+    .sort((a,b) => new Date(a.utcDate)-new Date(b.utcDate));
+  const logs = {};
+  finished.forEach(m => {
+    const h=m.homeTeam.name, a=m.awayTeam.name, hg=m.score.fullTime.home, ag=m.score.fullTime.away;
+    if (!logs[h]) logs[h]=[]; if (!logs[a]) logs[a]=[];
+    logs[h].push({gf:hg,ga:ag}); logs[a].push({gf:ag,ga:hg});
+  });
+  const leagueAvg = finished.length
+    ? finished.reduce((s,m)=>s+m.score.fullTime.home+m.score.fullTime.away,0)/(finished.length*2)
+    : 1.3;
+
+  function strength(team) {
+    const log = logs[team] || [];
+    const RECENT_N=5, RECENT_W=2, K=4;
+    let wSum=K, gfSum=leagueAvg*K, gaSum=leagueAvg*K;
+    log.forEach((g,idx) => {
+      const w = idx >= log.length-RECENT_N ? RECENT_W : 1;
+      wSum+=w; gfSum+=g.gf*w; gaSum+=g.ga*w;
+    });
+    return { attack: gfSum/wSum, defense: gaSum/wSum };
+  }
+  function predict(h,a) {
+    const H=strength(h), A=strength(a);
+    const HOME_ADV=1.12;
+    const eh=(H.attack*A.defense/leagueAvg)*HOME_ADV;
+    const ea=(A.attack*H.defense/leagueAvg)/HOME_ADV;
+    return [Math.max(0,Math.round(eh)), Math.max(0,Math.round(ea))];
+  }
+
+  const byDay = {};
+  matches.forEach(m => { const d=m.matchday||0; (byDay[d]=byDay[d]||[]).push(m); });
+  let fx = "";
+  Object.keys(byDay).sort((a,b)=>a-b).forEach(day => {
+    fx += `<div class="mw-header" data-day="${day}"><span class="mw-title">Αγωνιστική ${day}</span></div><div class="mw-body hidden" id="apimw-${day}">`;
+    byDay[day].forEach(m => {
+      const dateStr = new Date(m.utcDate).toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit'});
+      const h=m.homeTeam.name, a=m.awayTeam.name;
+      fx += `<div class="match-row-wrap"><div class="match-date">${dateStr}</div>`;
+      if (m.status==="FINISHED" && m.score && m.score.fullTime.home!==null) {
+        fx += `<div class="match-row"><span class="home">${h}</span><span>${m.score.fullTime.home} - ${m.score.fullTime.away}</span><span class="away">${a}</span></div>`;
+      } else {
+        const [ph,pa] = predict(h,a);
+        fx += `<div class="match-row"><span class="home">${h}</span><span class="dash">vs</span><span class="away">${a}</span></div><div class="predict-hint">🔮 πιθανό: ${ph}-${pa}</div>`;
+      }
+      fx += `</div>`;
+    });
+    fx += `</div>`;
+  });
+  document.getElementById("apiFixtures").innerHTML = fx;
+  document.querySelectorAll("#apiFixtures .mw-header").forEach(hdr => {
+    hdr.addEventListener("click", () => {
+      document.getElementById("apimw-"+hdr.dataset.day).classList.toggle("hidden");
+    });
+  });
+}
+
+function initApiMode() {
+  const sel = document.getElementById("compSelect");
+  sel.innerHTML = API_COMPETITIONS.map(c => `<option value="${c.code}">${c.name}</option>`).join("");
+  const keyInput = document.getElementById("apiKeyInput");
+  keyInput.value = getApiKey();
+  document.getElementById("saveKeyBtn").addEventListener("click", () => {
+    setApiKey(keyInput.value.trim());
+    document.getElementById("apiStatus").textContent = "✅ Αποθηκεύτηκε το key.";
+  });
+  document.getElementById("refreshApiBtn").addEventListener("click", () => {
+    loadCompetition(sel.value);
+  });
+}
+
+// ---------- STATE ----------
+let currentLeague = "epl";
+let currentView = "table";
+
+function loadFixtures(league) {
+  const key = "protathlimata_" + league + "_v1";
+  const base = league === "epl" ? EPL_FIXTURES : (league === "liga" ? LIGA_FIXTURES : BL_FIXTURES);
+  const saved = localStorage.getItem(key);
+  if (saved) {
+    try {
+      const overrides = JSON.parse(saved); // { "r-home-away": [hg,ag] }
+      return base.map(m => {
+        const k = m[0]+"-"+m[1]+"-"+m[2];
+        if (overrides[k]) return [m[0],m[1],m[2],overrides[k][0],overrides[k][1]];
+        return m.slice();
+      });
+    } catch(e) { return base.map(m=>m.slice()); }
+  }
+  return base.map(m => m.slice());
+}
+
+function saveScore(league, round, home, away, hg, ag) {
+  const key = "protathlimata_" + league + "_v1";
+  let overrides = {};
+  const saved = localStorage.getItem(key);
+  if (saved) { try { overrides = JSON.parse(saved); } catch(e) {} }
+  const k = round+"-"+home+"-"+away;
+  if (hg === null || ag === null) { delete overrides[k]; }
+  else { overrides[k] = [hg, ag]; }
+  localStorage.setItem(key, JSON.stringify(overrides));
+}
+
+let eplData = loadFixtures("epl");
+let ligaData = loadFixtures("liga");
+let blData = loadFixtures("bundesliga");
+
+function getData(league) {
+  if (league === "epl") return eplData;
+  if (league === "liga") return ligaData;
+  return blData;
+}
+function getNames(league) {
+  if (league === "epl") return EPL_NAMES;
+  if (league === "liga") return LIGA_NAMES;
+  return BL_NAMES;
+}
+
+// ---------- STANDINGS CALC ----------
+function computeStandings(fixtures, names) {
+  const table = {};
+  Object.keys(names).forEach(t => {
+    table[t] = { team:t, p:0,w:0,d:0,l:0,gf:0,ga:0,
+      hp:0,hw:0,hd:0,hl:0,hgf:0,hga:0,
+      ap:0,aw:0,ad:0,al:0,agf:0,aga:0 };
+  });
+  fixtures.forEach(([r,h,a,hg,ag]) => {
+    if (hg === null || ag === null) return;
+    const H = table[h], A = table[a];
+    H.p++; A.p++; H.hp++; A.ap++;
+    H.gf += hg; H.ga += ag; H.hgf += hg; H.hga += ag;
+    A.gf += ag; A.ga += hg; A.agf += ag; A.aga += hg;
+    if (hg > ag) { H.w++; H.hw++; A.l++; A.al++; }
+    else if (hg < ag) { A.w++; A.aw++; H.l++; H.hl++; }
+    else { H.d++; H.hd++; A.d++; A.ad++; }
+  });
+  return Object.values(table).map(t => ({
+    ...t, pts: t.w*3 + t.d, gd: t.gf - t.ga,
+    hpts: t.hw*3 + t.hd, hgd: t.hgf - t.hga,
+    apts: t.aw*3 + t.ad, agd: t.agf - t.aga
+  })).sort((x,y) => y.pts - x.pts || y.gd - x.gd || y.gf - x.gf);
+}
+
+// ---------- PREDICTION (blends last season's strength with this season's data) ----------
+// Prior-season (2025-26) goals for/against per team, used as a starting "strength" estimate.
+const PRIOR_EPL = {
+  "Arsenal":[71,27], "Man City":[77,35], "Man Utd":[69,50], "Aston Villa":[56,49],
+  "Liverpool":[63,53], "Bournemouth":[58,54], "Sunderland":[42,48], "Brighton":[52,46],
+  "Brentford":[55,52], "Chelsea":[58,52], "Fulham":[47,51], "Newcastle":[53,55],
+  "Everton":[47,50], "Leeds":[49,56], "Crystal Palace":[41,51], "Nott'm Forest":[48,51],
+  "Spurs":[48,57]
+};
+const PRIOR_LIGA = {
+  "Barcelona":[95,36], "RealMadrid":[77,35], "Villarreal":[72,46], "Atletico":[62,44],
+  "Betis":[59,48], "Celta":[53,48], "Getafe":[32,38], "Rayo":[41,44], "Valencia":[46,55],
+  "Sociedad":[59,61], "Espanyol":[43,55], "Athletic":[43,58], "Sevilla":[46,60],
+  "Alaves":[44,56], "Elche":[49,57], "Levante":[47,61], "Osasuna":[44,50]
+};
+const PRIOR_BL = {
+  "Bayern":[122,36], "Dortmund":[70,34], "Leipzig":[66,47], "Stuttgart":[71,49],
+  "Hoffenheim":[65,52], "Leverkusen":[68,47], "Freiburg":[51,57], "Frankfurt":[61,65],
+  "Augsburg":[45,61], "Mainz":[44,53], "UnionBerlin":[44,58], "Gladbach":[42,53],
+  "Hamburg":[40,54], "Koln":[49,63], "Bremen":[37,60]
+};
+// teams with no top-flight data last season (promoted) get a below-average default
+function getPriorInfo(league) {
+  if (league === "epl") return { data: PRIOR_EPL, games: 38, avg: 1.375, promoted: [37,69] };
+  if (league === "liga") return { data: PRIOR_LIGA, games: 38, avg: 1.347, promoted: [37,57] };
+  return { data: PRIOR_BL, games: 34, avg: 1.618, promoted: [38,67] };
+}
+
+function getTeamLogs(fixtures) {
+  const logs = {};
+  fixtures.forEach(([r,h,a,hg,ag]) => {
+    if (hg === null || ag === null) return;
+    if (!logs[h]) logs[h] = [];
+    if (!logs[a]) logs[a] = [];
+    logs[h].push({r, gf:hg, ga:ag});
+    logs[a].push({r, gf:ag, ga:hg});
+  });
+  Object.values(logs).forEach(arr => arr.sort((x,y)=>x.r-y.r));
+  return logs;
+}
+
+// K = how many "virtual" prior-season games the prior strength is worth;
+// fades out as more real games are played this season.
+// Recent games (last RECENT_N) count double, so current form matters more than season-long average.
+function blendedStrength(league, team, logs, K) {
+  const prior = getPriorInfo(league);
+  const priorArr = prior.data[team] || prior.promoted;
+  const priorGF = priorArr[0] / prior.games;
+  const priorGA = priorArr[1] / prior.games;
+  const log = logs[team] || [];
+  const RECENT_N = 5, RECENT_WEIGHT = 2;
+  let wSum = K, gfSum = priorGF*K, gaSum = priorGA*K;
+  log.forEach((g, idx) => {
+    const isRecent = idx >= log.length - RECENT_N;
+    const w = isRecent ? RECENT_WEIGHT : 1;
+    wSum += w; gfSum += g.gf*w; gaSum += g.ga*w;
+  });
+  return { attack: gfSum/wSum, defense: gaSum/wSum, weight: wSum };
+}
+
+// ---------- HEAD-TO-HEAD HISTORY (persists across seasons, independent of the fixture lists) ----------
+function h2hKey(t1, t2) { return [t1, t2].sort().join("|"); }
+
+function saveH2H(league, home, away, hg, ag) {
+  const storageKey = "protathlimata_h2h_v1";
+  let store = {};
+  const saved = localStorage.getItem(storageKey);
+  if (saved) { try { store = JSON.parse(saved); } catch(e) {} }
+  const pk = h2hKey(home, away);
+  if (!store[pk]) store[pk] = [];
+  store[pk] = store[pk].filter(m => !(m.league===league && m.home===home && m.away===away));
+  if (hg !== null && ag !== null) store[pk].push({league, home, away, hg, ag});
+  localStorage.setItem(storageKey, JSON.stringify(store));
+}
+
+function getH2HRecords(home, away) {
+  const storageKey = "protathlimata_h2h_v1";
+  let store = {};
+  const saved = localStorage.getItem(storageKey);
+  if (saved) { try { store = JSON.parse(saved); } catch(e) {} }
+  return store[h2hKey(home, away)] || [];
+}
+
+// Blends this season's (form-weighted) strength with head-to-head history against this specific opponent.
+function getMatchupStrengths(fixtures, home, away, excludeRound, league) {
+  const pool = (excludeRound !== undefined)
+    ? fixtures.filter(f => !(f[0]===excludeRound && f[1]===home && f[2]===away))
+    : fixtures;
+  const logs = getTeamLogs(pool);
+  const K = 6;
+  const H = blendedStrength(league, home, logs, K);
+  const A = blendedStrength(league, away, logs, K);
+
+  const h2h = getH2HRecords(home, away).filter(r => !(r.league===league && r.home===home && r.away===away));
+  if (h2h.length > 0) {
+    let sumHomeGF = 0, sumAwayGF = 0;
+    h2h.forEach(r => {
+      if (r.home === home) { sumHomeGF += r.hg; sumAwayGF += r.ag; }
+      else { sumHomeGF += r.ag; sumAwayGF += r.hg; }
+    });
+    const h2hAvgHome = sumHomeGF / h2h.length;
+    const h2hAvgAway = sumAwayGF / h2h.length;
+    const h2hWeight = Math.min(h2h.length, 4) * 1.5;
+    H.attack = (H.attack*H.weight + h2hAvgHome*h2hWeight) / (H.weight + h2hWeight);
+    A.attack = (A.attack*A.weight + h2hAvgAway*h2hWeight) / (A.weight + h2hWeight);
+  }
+  return { H, A, leagueAvg: getPriorInfo(league).avg, HOME_ADV: 1.12, h2hCount: h2h.length };
+}
+
+function predictScore(fixtures, home, away, excludeRound, league) {
+  const { H, A, leagueAvg, HOME_ADV } = getMatchupStrengths(fixtures, home, away, excludeRound, league);
+  const expHome = (H.attack * A.defense / leagueAvg) * HOME_ADV;
+  const expAway = (A.attack * H.defense / leagueAvg) / HOME_ADV;
+  return [Math.max(0, Math.round(expHome)), Math.max(0, Math.round(expAway))];
+}
+
+// Poisson probability mass function
+function poissonP(k, lambda) {
+  return Math.exp(-lambda) * Math.pow(lambda, k) / factorial(k);
+}
+function factorial(n) { let r=1; for(let i=2;i<=n;i++) r*=i; return r; }
+
+// 1-X-2 win/draw/away probabilities from the same expected-goals model (Poisson, capped at 8 goals each)
+function predictProbabilities(fixtures, home, away, excludeRound, league) {
+  const { H, A, leagueAvg, HOME_ADV } = getMatchupStrengths(fixtures, home, away, excludeRound, league);
+  const lamH = (H.attack * A.defense / leagueAvg) * HOME_ADV;
+  const lamA = (A.attack * H.defense / leagueAvg) / HOME_ADV;
+  let pHome=0, pDraw=0, pAway=0;
+  const MAXG = 8;
+  for (let i=0;i<=MAXG;i++) {
+    for (let j=0;j<=MAXG;j++) {
+      const p = poissonP(i,lamH) * poissonP(j,lamA);
+      if (i>j) pHome+=p; else if (i<j) pAway+=p; else pDraw+=p;
+    }
+  }
+  const total = pHome+pDraw+pAway;
+  return [Math.round(pHome/total*100), Math.round(pDraw/total*100), Math.round(pAway/total*100)];
+}
+
+function zoneClass(rank, total) {
+  if (rank <= 4) return "zone-title";
+  if (rank <= 5) return "zone-europe";
+  if (rank > total - 3) return "zone-relegation";
+  return "";
+}
+
+// ---------- RENDER TABLE VIEW ----------
+function renderTableView() {
+  const league = currentLeague;
+  const fixtures = getData(league);
+  const names = getNames(league);
+  const standings = computeStandings(fixtures, names);
+  const total = standings.length;
+
+  let html = `<table><thead><tr>
+    <th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Ν</th><th>Ι</th><th>Η</th>
+    <th>ΓΥ</th><th>ΓΚ</th><th>Δ</th><th>Β</th>
+  </tr></thead><tbody>`;
+  standings.forEach((t, i) => {
+    const rank = i+1;
+    html += `<tr class="${zoneClass(rank,total)}">
+      <td><span class="rank-badge">${rank}</span></td>
+      <td class="team">${names[t.team]}</td>
+      <td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td>
+      <td>${t.gf}</td><td>${t.ga}</td><td>${t.gd>0?'+':''}${t.gd}</td>
+      <td class="pts">${t.pts}</td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+
+  // Home / Away split, sorted by home pts / away pts respectively
+  const homeSorted = [...standings].sort((x,y)=> y.hpts-x.hpts || y.hgd-x.hgd);
+  const awaySorted = [...standings].sort((x,y)=> y.apts-x.apts || y.agd-x.agd);
+
+  function splitTable(list, prefix) {
+    let h = `<table><thead><tr><th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Β</th><th>Δ</th></tr></thead><tbody>`;
+    list.forEach((t,i) => {
+      h += `<tr><td>${i+1}</td><td class="team">${names[t.team]}</td>
+        <td>${t[prefix+'p']}</td>
+        <td>${t[prefix+'gd']>0?'+':''}${t[prefix+'gd']}</td>
+        <td class="pts">${t[prefix+'pts']}</td></tr>`;
+    });
+    h += `</tbody></table>`;
+    return h;
+  }
+
+  html += `<div class="split-wrap">
+    <div><div class="split-title">🏠 Εντός έδρας</div>${splitTable(homeSorted,'h')}</div>
+    <div><div class="split-title">✈️ Εκτός έδρας</div>${splitTable(awaySorted,'a')}</div>
+  </div>`;
+
+  const played = fixtures.filter(f=>f[3]!==null).length;
+  html += `<div class="note">Καταχωρημένοι αγώνες: ${played} / ${fixtures.length}. Πήγαινε στην καρτέλα "Αγωνιστικές" για να συμπληρώσεις σκορ.</div>`;
+
+  document.getElementById("view-table").innerHTML = html;
+}
+
+// ---------- RENDER FIXTURES VIEW ----------
+function renderFixturesView() {
+  const league = currentLeague;
+  const fixtures = getData(league);
+  const names = getNames(league);
+  const dates = getDates(league);
+  const rounds = {};
+  fixtures.forEach((m,i) => { (rounds[m[0]] = rounds[m[0]] || []).push({m, i}); });
+
+  let html = "";
+  Object.keys(rounds).sort((a,b)=>a-b).forEach(r => {
+    const entries = rounds[r];
+    const matches = entries.map(e=>e.m);
+    const playedCount = matches.filter(m=>m[3]!==null).length;
+    const done = playedCount === matches.length;
+    const roundDates = entries.map(e=>dates[e.i]);
+    const uniqueDates = [...new Set(roundDates)];
+    const dateLabel = uniqueDates.length === 1 ? uniqueDates[0] : (uniqueDates[0] + '–' + uniqueDates[uniqueDates.length-1]);
+
+    // accuracy of predictions among already-played matches in this round
+    let resultHits = 0, exactHits = 0;
+    entries.forEach(({m, i}) => {
+      const [rr,h,a,hg,ag] = m;
+      if (hg === null || ag === null) return;
+      const [ph,pa] = predictScore(fixtures, h, a, rr, league);
+      const actualResult = hg>ag?'H':(hg<ag?'A':'D');
+      const predResult = ph>pa?'H':(ph<pa?'A':'D');
+      if (actualResult === predResult) resultHits++;
+      if (ph===hg && pa===ag) exactHits++;
+    });
+    let accuracyBadges = "";
+    if (playedCount > 0) {
+      const resultPct = Math.round(resultHits/playedCount*100);
+      const exactPct = Math.round(exactHits/playedCount*100);
+      accuracyBadges = `<span class="acc-badge acc-yellow" title="Σωστός νικητής/ισοπαλία">🟡 ${resultPct}%</span><span class="acc-badge acc-green" title="Ακριβές σκορ">🟢 ${exactPct}%</span>`;
+    }
+
+    html += `<div class="mw-header ${done?'done':''}" data-round="${r}">
+      <span class="mw-title">Αγωνιστική ${r} <span class="mw-date">(${dateLabel})</span></span>
+      <span class="mw-status-wrap">${accuracyBadges}<span class="mw-status">${playedCount}/${matches.length} ${done?'✓':''}</span></span>
+    </div>
+    <div class="mw-body hidden" id="mwbody-${r}">`;
+    entries.forEach(({m, i}) => {
+      const [rr,h,a,hg,ag] = m;
+      const matchDate = dates[i];
+      const [ph,pa] = predictScore(fixtures, h, a, rr, league);
+      const [p1,pX,p2] = predictProbabilities(fixtures, h, a, rr, league);
+      const h2hCount = getH2HRecords(h, a).filter(rec => !(rec.league===league && rec.home===h && rec.away===a)).length;
+      const h2hNote = h2hCount > 0 ? ` <span class="h2h-tag">βάσει ${h2hCount} προηγ.</span>` : "";
+      const probsLine = `<div class="probs-line">${p1}% · ${pX}% Χ · ${p2}%${h2hNote}</div>`;
+      let predictHint = "";
+      if (hg === null || ag === null) {
+        predictHint = `<div class="predict-hint">🔮 πιθανό: ${ph}-${pa}</div>${probsLine}`;
+      } else {
+        const exactHit = (ph===hg && pa===ag);
+        const actualResult = hg>ag?'H':(hg<ag?'A':'D');
+        const predResult = ph>pa?'H':(ph<pa?'A':'D');
+        const resultHit = actualResult === predResult;
+        const cls = exactHit ? 'hit-exact' : (resultHit ? 'hit-result' : 'hit-miss');
+        const label = exactHit ? '✅ ακριβές' : (resultHit ? '🟡 σωστό αποτέλεσμα' : '❌');
+        predictHint = `<div class="predict-hint ${cls}">🔮 πρόβλεψη ήταν: ${ph}-${pa} · ${label}</div>`;
+      }
+      html += `<div class="match-row-wrap">
+      <div class="match-date">${matchDate}</div>
+      <div class="match-row">
+        <span class="home">${names[h]}</span>
+        <span class="score-inputs">
+          <input type="number" min="0" max="20" data-round="${rr}" data-home="${h}" data-away="${a}" data-side="h" value="${hg===null?'':hg}">
+          <span class="dash">-</span>
+          <input type="number" min="0" max="20" data-round="${rr}" data-home="${h}" data-away="${a}" data-side="a" value="${ag===null?'':ag}">
+        </span>
+        <span class="away">${names[a]}</span>
+      </div>${predictHint}</div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById("view-fixtures").innerHTML = html;
+
+  // accordion toggles
+  document.querySelectorAll(".mw-header").forEach(hdr => {
+    hdr.addEventListener("click", () => {
+      const r = hdr.dataset.round;
+      document.getElementById("mwbody-"+r).classList.toggle("hidden");
+    });
+  });
+
+  // score inputs
+  document.querySelectorAll(".score-inputs input").forEach(inp => {
+    inp.addEventListener("change", () => {
+      const round = parseInt(inp.dataset.round);
+      const home = inp.dataset.home;
+      const away = inp.dataset.away;
+      const data = getData(currentLeague);
+      const match = data.find(m => m[0]===round && m[1]===home && m[2]===away);
+      const homeInput = document.querySelector(`input[data-round="${round}"][data-home="${home}"][data-away="${away}"][data-side="h"]`);
+      const awayInput = document.querySelector(`input[data-round="${round}"][data-home="${home}"][data-away="${away}"][data-side="a"]`);
+      const hv = homeInput.value === "" ? null : parseInt(homeInput.value);
+      const av = awayInput.value === "" ? null : parseInt(awayInput.value);
+      match[3] = (hv===null || isNaN(hv)) ? null : hv;
+      match[4] = (av===null || isNaN(av)) ? null : av;
+      saveScore(currentLeague, round, home, away, match[3], match[4]);
+      saveH2H(currentLeague, home, away, match[3], match[4]);
+      renderFixturesView();
+      renderTableView();
+    });
+  });
+}
+
+function render() {
+  const isApi = currentLeague === "api";
+  document.querySelector(".subtabs").classList.toggle("hidden", isApi);
+  document.getElementById("view-table").classList.toggle("hidden", isApi || currentView !== "table");
+  document.getElementById("view-fixtures").classList.toggle("hidden", isApi || currentView !== "fixtures");
+  document.getElementById("view-api").classList.toggle("hidden", !isApi);
+  document.querySelector(".legend").classList.toggle("hidden", isApi);
+  document.getElementById("resetBtn").classList.toggle("hidden", isApi);
+  if (isApi) return;
+  renderTableView();
+  renderFixturesView();
+}
+
+// ---------- EVENT WIRING ----------
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    currentLeague = tab.dataset.league;
+    render();
+  });
+});
+document.querySelectorAll(".subtab").forEach(st => {
+  st.addEventListener("click", () => {
+    document.querySelectorAll(".subtab").forEach(t=>t.classList.remove("active"));
+    st.classList.add("active");
+    currentView = st.dataset.view;
+    render();
+  });
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  const leagueLabel = currentLeague==="epl" ? "Premier League" : (currentLeague==="liga" ? "La Liga" : "Bundesliga");
+  if (!confirm("Σίγουρα θέλεις να διαγράψεις όλα τα καταχωρημένα σκορ για το τρέχον πρωτάθλημα (" + leagueLabel + ");")) return;
+  localStorage.removeItem("protathlimata_" + currentLeague + "_v1");
+  if (currentLeague === "epl") eplData = loadFixtures("epl");
+  else if (currentLeague === "liga") ligaData = loadFixtures("liga");
+  else blData = loadFixtures("bundesliga");
+  render();
+});
+
+render();
+initApiMode();
+</script>
+
+</body>
+</html>
