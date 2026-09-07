@@ -3,12 +3,13 @@
 // από το δωρεάν πλάνο του football-data.org, ώστε το index.html να μπορεί να
 // καλέσει τα στατιστικά απευθείας.
 //
-// Οδηγίες ανάπτυξης (dashboard.cloudflare.com, δωρεάν, χωρίς κάρτα):
-//   1. Workers & Pages -> Create -> Create Worker -> δώσε ένα όνομα -> Deploy.
-//   2. Edit code -> σβήσε το προεπιλεγμένο περιεχόμενο -> επικόλλησε αυτό το αρχείο -> Deploy.
-//   3. Settings -> Variables and Secrets -> Add -> name: FOOTBALL_API_KEY,
-//      value: το key σου από football-data.org -> encrypt -> Save & deploy.
-//   4. Αντέγραψε το URL του worker (κάτι σαν https://<name>.<subdomain>.workers.dev)
+// Ανάπτυξη μέσω Git-connected Workers Builds (dashboard.cloudflare.com):
+//   1. Settings -> Builds -> Deploy command, βάλε (πρώτα deploy, μετά secret -
+//      το wrangler δεν επιτρέπει secret put πριν να έχει γίνει deploy η έκδοση):
+//        sh -c 'npx wrangler deploy && printf "%s" "$FOOTBALL_API_KEY" | npx wrangler secret put FOOTBALL_API_KEY'
+//   2. Settings -> Variables and Secrets -> Add build variable FOOTBALL_API_KEY
+//      (encrypted) με το key σου από football-data.org.
+//   3. Αντέγραψε το URL του worker (κάτι σαν https://<name>.<subdomain>.workers.dev)
 //      και βάλτο στο πεδίο "URL του Worker σου" μέσα στο app, tab "API".
 
 export default {
