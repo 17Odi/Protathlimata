@@ -18,12 +18,6 @@ export default {
       return new Response(null, { headers: corsHeaders() });
     }
     const url = new URL(request.url);
-    if (url.pathname === "/debug-key") {
-      return new Response(JSON.stringify({
-        keySet: Boolean(env.FOOTBALL_API_KEY),
-        keyLength: (env.FOOTBALL_API_KEY || "").length
-      }), { headers: { "Content-Type": "application/json", ...corsHeaders() } });
-    }
     const target = "https://api.football-data.org/v4" + url.pathname + url.search;
     const upstream = await fetch(target, {
       headers: { "X-Auth-Token": env.FOOTBALL_API_KEY }
