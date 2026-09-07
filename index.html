@@ -139,7 +139,7 @@
 <div id="view-api" class="hidden">
   <div class="api-box">
     <div class="api-row">
-      <input type="password" id="apiKeyInput" placeholder="API key (football-data.org)">
+      <input type="url" id="workerUrlInput" placeholder="URL του Worker σου (π.χ. https://xxx.workers.dev)">
       <button id="saveKeyBtn">Αποθήκευση</button>
     </div>
     <div class="api-row">
@@ -451,13 +451,16 @@ const API_COMPETITIONS = [
   {code:"EC", name:"Euro (Εθνικές Ομάδες)"}
 ];
 
-function getApiKey() { return localStorage.getItem("protathlimata_api_key") || ""; }
-function setApiKey(k) { localStorage.setItem("protathlimata_api_key", k); }
+function getWorkerUrl() { return (localStorage.getItem("protathlimata_worker_url") || "").trim().replace(/\/$/, ""); }
+function setWorkerUrl(u) { localStorage.setItem("protathlimata_worker_url", u.trim().replace(/\/$/, "")); }
 
+// Το football-data.org (δωρεάν πλάνο) δεν επιτρέπει απευθείας κλήσεις από browser (CORS).
+// Αντί για public proxy τρίτων, καλούμε το δικό σου Cloudflare Worker (βλ. cloudflare-worker.js),
+// που κρατάει το API key του football-data.org μυστικό και προσθέτει τα σωστά CORS headers.
 async function apiFetch(path) {
-  const key = getApiKey();
-  if (!key) throw new Error("NOKEY");
-  const res = await fetch("https://api.football-data.org/v4" + path, { headers: { "X-Auth-Token": key } });
+  const base = getWorkerUrl();
+  if (!base) throw new Error("NOKEY");
+  const res = await fetch(base + path);
   if (res.status === 429) throw new Error("RATE_LIMIT");
   if (res.status === 403) throw new Error("FORBIDDEN");
   if (!res.ok) throw new Error("HTTP_" + res.status);
@@ -478,10 +481,10 @@ async function loadCompetition(code) {
     statusEl.textContent = "Ενημερώθηκε: " + new Date().toLocaleTimeString('el-GR');
     renderApiView(code);
   } catch (e) {
-    if (e.message === "NOKEY") statusEl.textContent = "⚠️ Βάλε πρώτα το API key σου και πάτα Αποθήκευση.";
+    if (e.message === "NOKEY") statusEl.textContent = "⚠️ Βάλε πρώτα το URL του Worker σου και πάτα Αποθήκευση.";
     else if (e.message === "RATE_LIMIT") statusEl.textContent = "⚠️ Έφτασες το όριο αιτημάτων (10/λεπτό). Δοκίμασε ξανά σε λίγο.";
-    else if (e.message === "FORBIDDEN") statusEl.textContent = "⚠️ Μη έγκυρο API key, ή αυτό το πρωτάθλημα δεν καλύπτεται στο δωρεάν πλάνο σου.";
-    else statusEl.textContent = "⚠️ Σφάλμα σύνδεσης (" + e.message + "). Αν ανοίγεις το αρχείο τοπικά, ίσως χρειάζεται να το φιλοξενήσεις (π.χ. GitHub Pages) λόγω CORS.";
+    else if (e.message === "FORBIDDEN") statusEl.textContent = "⚠️ Μη έγκυρο API key στο Worker σου, ή αυτό το πρωτάθλημα δεν καλύπτεται στο δωρεάν πλάνο σου.";
+    else statusEl.textContent = "⚠️ Σφάλμα σύνδεσης (" + e.message + "). Δοκίμασε ξανά σε λίγο.";
   }
 }
 
@@ -576,11 +579,11 @@ function renderApiView(code) {
 function initApiMode() {
   const sel = document.getElementById("compSelect");
   sel.innerHTML = API_COMPETITIONS.map(c => `<option value="${c.code}">${c.name}</option>`).join("");
-  const keyInput = document.getElementById("apiKeyInput");
-  keyInput.value = getApiKey();
+  const urlInput = document.getElementById("workerUrlInput");
+  urlInput.value = getWorkerUrl();
   document.getElementById("saveKeyBtn").addEventListener("click", () => {
-    setApiKey(keyInput.value.trim());
-    document.getElementById("apiStatus").textContent = "✅ Αποθηκεύτηκε το key.";
+    setWorkerUrl(urlInput.value);
+    document.getElementById("apiStatus").textContent = "✅ Αποθηκεύτηκε το URL.";
   });
   document.getElementById("refreshApiBtn").addEventListener("click", () => {
     loadCompetition(sel.value);
