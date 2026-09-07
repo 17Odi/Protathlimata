@@ -119,12 +119,14 @@
 <body>
 
 <h1>⚽ Πρωταθλήματα 2026-2027</h1>
-<div class="subtitle">Premier League · La Liga · Bundesliga — καταχώρησε τα σκορ κάθε αγωνιστικής</div>
+<div class="subtitle">Premier League · La Liga · Bundesliga · Serie A · Ligue 1</div>
 
 <div class="tabs">
   <div class="tab active" data-league="epl">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</div>
   <div class="tab" data-league="liga">🇪🇸 La Liga</div>
   <div class="tab" data-league="bundesliga">🇩🇪 Bundesliga</div>
+  <div class="tab" data-league="seriea">🇮🇹 Serie A</div>
+  <div class="tab" data-league="ligue1">🇫🇷 Ligue 1</div>
   <div class="tab" data-league="api">🌐 API (12 πρωτ.)</div>
 </div>
 
@@ -188,12 +190,28 @@ const BL_NAMES = {
   "Dortmund":"Borussia Dortmund", "Hamburg":"Hamburger SV", "Freiburg":"Sport-Club Freiburg",
   "Bremen":"SV Werder Bremen", "Augsburg":"FC Augsburg", "Schalke":"FC Schalke 04"
 };
+const SERIEA_NAMES = {
+  "Atalanta":"Atalanta BC", "Bologna":"Bologna FC", "Cagliari":"Cagliari Calcio",
+  "Como":"Como 1907", "Fiorentina":"ACF Fiorentina", "Frosinone":"Frosinone Calcio",
+  "Genoa":"Genoa CFC", "Inter":"FC Internazionale", "Juventus":"Juventus FC",
+  "Lazio":"SS Lazio", "Lecce":"US Lecce", "Milan":"AC Milan", "Monza":"AC Monza",
+  "Napoli":"SSC Napoli", "Parma":"Parma Calcio 1913", "Roma":"AS Roma",
+  "Sassuolo":"US Sassuolo", "Torino":"Torino FC", "Udinese":"Udinese Calcio", "Venezia":"Venezia FC"
+};
+const LIGUE1_NAMES = {
+  "Angers":"Angers SCO", "Auxerre":"AJ Auxerre", "Brest":"Stade Brestois 29",
+  "Havre":"Havre AC", "LeMans":"Le Mans FC", "Lens":"RC Lens", "Lille":"LOSC Lille",
+  "Lorient":"FC Lorient", "Lyon":"Olympique Lyonnais", "Marseille":"Olympique de Marseille",
+  "Monaco":"AS Monaco", "Nice":"OGC Nice", "PSG":"Paris Saint-Germain", "ParisFC":"Paris FC",
+  "Rennes":"Stade Rennais FC", "Strasbourg":"RC Strasbourg Alsace", "Toulouse":"Toulouse FC",
+  "Troyes":"ESTAC Troyes"
+};
 
 // ---------- FIXTURES: [round, home, away, homeGoals, awayGoals] (null = not played) ----------
 const EPL_FIXTURES = [
 [1,"Arsenal","Coventry",3,0],[1,"Hull","Man Utd",2,0],[1,"Everton","Crystal Palace",2,0],[1,"Ipswich","Sunderland",2,1],[1,"Nott'm Forest","Leeds",0,1],[1,"Brentford","Spurs",3,0],[1,"Brighton","Aston Villa",4,0],[1,"Man City","Bournemouth",2,1],[1,"Newcastle","Liverpool",2,2],[1,"Fulham","Chelsea",2,3],
 [2,"Crystal Palace","Man City",1,4],[2,"Liverpool","Nott'm Forest",2,2],[2,"Bournemouth","Everton",1,1],[2,"Coventry","Hull",0,1],[2,"Spurs","Newcastle",0,2],[2,"Chelsea","Brighton",4,3],[2,"Leeds","Brentford",1,1],[2,"Sunderland","Fulham",1,0],[2,"Man Utd","Ipswich",5,2],[2,"Aston Villa","Arsenal",0,1],
-[3,"Ipswich","Liverpool",0,2],[3,"Newcastle","Bournemouth",null,null],[3,"Brentford","Sunderland",null,null],[3,"Brighton","Leeds",null,null],[3,"Fulham","Crystal Palace",null,null],[3,"Man City","Coventry",null,null],[3,"Nott'm Forest","Spurs",null,null],[3,"Hull","Aston Villa",null,null],[3,"Everton","Man Utd",null,null],[3,"Arsenal","Chelsea",null,null],
+[3,"Ipswich","Liverpool",0,2],[3,"Newcastle","Bournemouth",2,2],[3,"Brentford","Sunderland",1,1],[3,"Brighton","Leeds",1,1],[3,"Fulham","Crystal Palace",2,3],[3,"Man City","Coventry",1,0],[3,"Nott'm Forest","Spurs",0,0],[3,"Hull","Aston Villa",0,0],[3,"Everton","Man Utd",null,null],[3,"Arsenal","Chelsea",null,null],
 [4,"Bournemouth","Brentford",null,null],[4,"Aston Villa","Nott'm Forest",null,null],[4,"Chelsea","Hull",null,null],[4,"Crystal Palace","Ipswich",null,null],[4,"Liverpool","Fulham",null,null],[4,"Spurs","Everton",null,null],[4,"Sunderland","Arsenal",null,null],[4,"Coventry","Brighton",null,null],[4,"Man Utd","Man City",null,null],[4,"Leeds","Newcastle",null,null],
 [5,"Brentford","Chelsea",null,null],[5,"Spurs","Aston Villa",null,null],[5,"Brighton","Arsenal",null,null],[5,"Everton","Ipswich",null,null],[5,"Newcastle","Hull",null,null],[5,"Nott'm Forest","Coventry",null,null],[5,"Bournemouth","Liverpool",null,null],[5,"Leeds","Crystal Palace",null,null],[5,"Man City","Sunderland",null,null],[5,"Fulham","Man Utd",null,null],
 [6,"Arsenal","Leeds",null,null],[6,"Aston Villa","Brentford",null,null],[6,"Chelsea","Bournemouth",null,null],[6,"Ipswich","Fulham",null,null],[6,"Sunderland","Brighton",null,null],[6,"Man Utd","Spurs",null,null],[6,"Crystal Palace","Nott'm Forest",null,null],[6,"Hull","Everton",null,null],[6,"Liverpool","Man City",null,null],[6,"Coventry","Newcastle",null,null],
@@ -235,7 +253,7 @@ const LIGA_FIXTURES = [
 [1,"Alaves","Getafe",3,0],[1,"Sevilla","Rayo",2,1],[1,"Racing","Villarreal",2,2],[1,"Espanyol","Levante",3,0],[1,"Depor","Elche",1,1],[1,"Atletico","Malaga",2,0],[1,"Valencia","Betis",0,1],[1,"RealMadrid","Sociedad",4,1],[1,"Celta","Osasuna",1,2],[1,"Barcelona","Athletic",2,0],
 [2,"Rayo","Alaves",1,1],[2,"Betis","Sociedad",1,0],[2,"Athletic","Sevilla",1,3],[2,"Valencia","Celta",0,0],[2,"Espanyol","RealMadrid",1,2],[2,"Atletico","Villarreal",2,2],[2,"Getafe","Racing",1,0],[2,"Elche","Barcelona",0,5],[2,"Osasuna","Levante",0,0],[2,"Malaga","Depor",1,1],
 [3,"Racing","Elche",3,2],[3,"Alaves","Villarreal",1,0],[3,"Levante","Betis",5,2],[3,"Sociedad","Espanyol",2,1],[3,"Sevilla","Atletico",1,3],[3,"RealMadrid","Malaga",4,0],[3,"Depor","Valencia",3,1],[3,"Celta","Athletic",0,2],[3,"Osasuna","Getafe",1,0],[3,"Barcelona","Rayo",5,2],
-[4,"Betis","RealMadrid",null,null],[4,"Athletic","Atletico",null,null],[4,"Rayo","Racing",null,null],[4,"Villarreal","Depor",null,null],[4,"Valencia","Barcelona",null,null],[4,"Alaves","Osasuna",null,null],[4,"Malaga","Levante",null,null],[4,"Espanyol","Sevilla",null,null],[4,"Getafe","Celta",null,null],[4,"Elche","Sociedad",null,null],
+[4,"Betis","RealMadrid",1,0],[4,"Athletic","Atletico",3,0],[4,"Rayo","Racing",3,2],[4,"Villarreal","Depor",2,3],[4,"Valencia","Barcelona",null,null],[4,"Alaves","Osasuna",null,null],[4,"Malaga","Levante",null,null],[4,"Espanyol","Sevilla",null,null],[4,"Getafe","Celta",null,null],[4,"Elche","Sociedad",null,null],
 [5,"Sevilla","Valencia",null,null],[5,"Racing","Alaves",null,null],[5,"Osasuna","Espanyol",null,null],[5,"Athletic","Elche",null,null],[5,"RealMadrid","Rayo",null,null],[5,"Celta","Malaga",null,null],[5,"Levante","Barcelona",null,null],[5,"Getafe","Depor",null,null],[5,"Sociedad","Atletico",null,null],[5,"Villarreal","Betis",null,null],
 [6,"Sociedad","Celta",0,0],[6,"Rayo","Espanyol",null,null],[6,"Alaves","Valencia",null,null],[6,"Elche","RealMadrid",null,null],[6,"Atletico","Osasuna",null,null],[6,"Depor","Sevilla",null,null],[6,"Barcelona","Racing",null,null],[6,"Levante","Athletic",null,null],[6,"Betis","Getafe",null,null],[6,"Malaga","Villarreal",null,null],
 [7,"Espanyol","Elche",null,null],[7,"Osasuna","Rayo",null,null],[7,"Athletic","Alaves",null,null],[7,"Celta","Racing",null,null],[7,"Sevilla","Barcelona",null,null],[7,"Getafe","Malaga",null,null],[7,"Atletico","RealMadrid",null,null],[7,"Depor","Betis",null,null],[7,"Villarreal","Levante",null,null],[7,"Valencia","Sociedad",null,null],
@@ -274,7 +292,7 @@ const LIGA_FIXTURES = [
 
 const BL_FIXTURES = [
 [1,"Bayern","Stuttgart",5,1],[1,"Elversberg","Leverkusen",3,2],[1,"Koln","Hoffenheim",3,2],[1,"UnionBerlin","Frankfurt",3,3],[1,"Mainz","Paderborn",0,0],[1,"Leipzig","Gladbach",3,0],[1,"Dortmund","Hamburg",2,0],[1,"Freiburg","Bremen",4,1],[1,"Augsburg","Schalke",3,0],
-[2,"Stuttgart","Koln",null,null],[2,"Paderborn","Freiburg",null,null],[2,"Bremen","Leipzig",null,null],[2,"Gladbach","Elversberg",null,null],[2,"Leverkusen","UnionBerlin",null,null],[2,"Hoffenheim","Dortmund",null,null],[2,"Schalke","Bayern",null,null],[2,"Hamburg","Mainz",null,null],[2,"Frankfurt","Augsburg",null,null],
+[2,"Stuttgart","Koln",4,1],[2,"Paderborn","Freiburg",0,1],[2,"Bremen","Leipzig",3,1],[2,"Gladbach","Elversberg",3,4],[2,"Leverkusen","UnionBerlin",4,0],[2,"Hoffenheim","Dortmund",2,3],[2,"Schalke","Bayern",0,0],[2,"Hamburg","Mainz",null,null],[2,"Frankfurt","Augsburg",null,null],
 [3,"UnionBerlin","Schalke",null,null],[3,"Mainz","Frankfurt",null,null],[3,"Augsburg","Leverkusen",null,null],[3,"Freiburg","Gladbach",null,null],[3,"Hoffenheim","Stuttgart",null,null],[3,"Dortmund","Paderborn",null,null],[3,"Koln","Bremen",null,null],[3,"Leipzig","Hamburg",null,null],[3,"Elversberg","Bayern",null,null],
 [4,"Bayern","UnionBerlin",null,null],[4,"Bremen","Augsburg",null,null],[4,"Hamburg","Koln",null,null],[4,"Gladbach","Mainz",null,null],[4,"Frankfurt","Freiburg",null,null],[4,"Stuttgart","Dortmund",null,null],[4,"Leverkusen","Leipzig",null,null],[4,"Schalke","Elversberg",null,null],[4,"Paderborn","Hoffenheim",null,null],
 [5,"Paderborn","Stuttgart",null,null],[5,"Koln","Gladbach",null,null],[5,"UnionBerlin","Elversberg",null,null],[5,"Mainz","Leverkusen",null,null],[5,"Augsburg","Bayern",null,null],[5,"Freiburg","Schalke",null,null],[5,"Hoffenheim","Hamburg",null,null],[5,"Leipzig","Frankfurt",null,null],[5,"Dortmund","Bremen",null,null],
@@ -307,6 +325,698 @@ const BL_FIXTURES = [
 [32,"Elversberg","Hoffenheim",null,null],[32,"Schalke","Frankfurt",null,null],[32,"UnionBerlin","Bremen",null,null],[32,"Mainz","Dortmund",null,null],[32,"Augsburg","Stuttgart",null,null],[32,"Freiburg","Koln",null,null],[32,"Leverkusen","Hamburg",null,null],[32,"Leipzig","Paderborn",null,null],[32,"Bayern","Gladbach",null,null],
 [33,"Paderborn","UnionBerlin",null,null],[33,"Bremen","Schalke",null,null],[33,"Hamburg","Freiburg",null,null],[33,"Gladbach","Augsburg",null,null],[33,"Frankfurt","Elversberg",null,null],[33,"Leverkusen","Bayern",null,null],[33,"Hoffenheim","Mainz",null,null],[33,"Stuttgart","Leipzig",null,null],[33,"Dortmund","Koln",null,null],
 [34,"Elversberg","Bremen",null,null],[34,"Schalke","Leverkusen",null,null],[34,"Koln","Paderborn",null,null],[34,"UnionBerlin","Gladbach",null,null],[34,"Mainz","Stuttgart",null,null],[34,"Augsburg","Hamburg",null,null],[34,"Freiburg","Dortmund",null,null],[34,"Leipzig","Hoffenheim",null,null],[34,"Bayern","Frankfurt",null,null]
+];
+
+const SERIEA_FIXTURES = [
+[1,"Inter","Monza",4,1],
+[1,"Udinese","Como",1,1],
+[1,"Genoa","Napoli",0,2],
+[1,"Parma","Cagliari",0,1],
+[1,"Frosinone","Juventus",0,1],
+[1,"Venezia","Lecce",0,2],
+[1,"Atalanta","Sassuolo",2,1],
+[1,"Torino","Milan",1,2],
+[1,"Bologna","Lazio",0,1],
+[1,"Roma","Fiorentina",4,0],
+[2,"Milan","Venezia",2,0],
+[2,"Fiorentina","Frosinone",0,3],
+[2,"Monza","Udinese",2,3],
+[2,"Sassuolo","Torino",2,1],
+[2,"Juventus","Parma",2,0],
+[2,"Napoli","Como",1,2],
+[2,"Cagliari","Inter",0,1],
+[2,"Lazio","Genoa",1,0],
+[2,"Lecce","Roma",0,4],
+[2,"Atalanta","Bologna",1,0],
+[3,"Genoa","Como",1,4],
+[3,"Fiorentina","Torino",1,2],
+[3,"Inter","Napoli",3,2],
+[3,"Roma","Atalanta",2,1],
+[3,"Frosinone","Venezia",null,null],
+[3,"Parma","Monza",null,null],
+[3,"Bologna","Sassuolo",null,null],
+[3,"Juventus","Milan",null,null],
+[3,"Cagliari","Lecce",null,null],
+[3,"Udinese","Lazio",null,null],
+[4,"Venezia","Fiorentina",null,null],
+[4,"Genoa","Frosinone",null,null],
+[4,"Lazio","Milan",null,null],
+[4,"Atalanta","Cagliari",null,null],
+[4,"Lecce","Monza",null,null],
+[4,"Napoli","Bologna",null,null],
+[4,"Sassuolo","Juventus",null,null],
+[4,"Como","Parma",null,null],
+[4,"Torino","Roma",null,null],
+[4,"Inter","Udinese",null,null],
+[5,"Monza","Sassuolo",null,null],
+[5,"Bologna","Torino",null,null],
+[5,"Udinese","Cagliari",null,null],
+[5,"Roma","Inter",null,null],
+[5,"Venezia","Lazio",null,null],
+[5,"Fiorentina","Napoli",null,null],
+[5,"Frosinone","Como",null,null],
+[5,"Parma","Genoa",null,null],
+[5,"Juventus","Atalanta",null,null],
+[5,"Milan","Lecce",null,null],
+[6,"Atalanta","Venezia",null,null],
+[6,"Cagliari","Juventus",null,null],
+[6,"Como","Roma",null,null],
+[6,"Genoa","Fiorentina",null,null],
+[6,"Inter","Parma",null,null],
+[6,"Lazio","Monza",null,null],
+[6,"Lecce","Bologna",null,null],
+[6,"Napoli","Frosinone",null,null],
+[6,"Sassuolo","Milan",null,null],
+[6,"Torino","Udinese",null,null],
+[7,"Bologna","Inter",null,null],
+[7,"Fiorentina","Como",null,null],
+[7,"Frosinone","Sassuolo",null,null],
+[7,"Juventus","Lazio",null,null],
+[7,"Milan","Atalanta",null,null],
+[7,"Monza","Cagliari",null,null],
+[7,"Parma","Torino",null,null],
+[7,"Roma","Genoa",null,null],
+[7,"Udinese","Lecce",null,null],
+[7,"Venezia","Napoli",null,null],
+[8,"Atalanta","Frosinone",null,null],
+[8,"Cagliari","Bologna",null,null],
+[8,"Como","Sassuolo",null,null],
+[8,"Genoa","Venezia",null,null],
+[8,"Inter","Fiorentina",null,null],
+[8,"Lazio","Parma",null,null],
+[8,"Lecce","Juventus",null,null],
+[8,"Napoli","Roma",null,null],
+[8,"Torino","Monza",null,null],
+[8,"Udinese","Milan",null,null],
+[9,"Fiorentina","Atalanta",null,null],
+[9,"Frosinone","Lecce",null,null],
+[9,"Genoa","Juventus",null,null],
+[9,"Milan","Bologna",null,null],
+[9,"Monza","Napoli",null,null],
+[9,"Parma","Udinese",null,null],
+[9,"Roma","Cagliari",null,null],
+[9,"Sassuolo","Lazio",null,null],
+[9,"Torino","Como",null,null],
+[9,"Venezia","Inter",null,null],
+[10,"Atalanta","Parma",null,null],
+[10,"Bologna","Monza",null,null],
+[10,"Como","Venezia",null,null],
+[10,"Frosinone","Torino",null,null],
+[10,"Juventus","Napoli",null,null],
+[10,"Lazio","Cagliari",null,null],
+[10,"Lecce","Genoa",null,null],
+[10,"Milan","Inter",null,null],
+[10,"Sassuolo","Fiorentina",null,null],
+[10,"Udinese","Roma",null,null],
+[11,"Cagliari","Frosinone",null,null],
+[11,"Fiorentina","Juventus",null,null],
+[11,"Genoa","Milan",null,null],
+[11,"Inter","Como",null,null],
+[11,"Monza","Atalanta",null,null],
+[11,"Napoli","Lazio",null,null],
+[11,"Parma","Bologna",null,null],
+[11,"Roma","Sassuolo",null,null],
+[11,"Torino","Lecce",null,null],
+[11,"Venezia","Udinese",null,null],
+[12,"Atalanta","Inter",null,null],
+[12,"Bologna","Udinese",null,null],
+[12,"Como","Cagliari",null,null],
+[12,"Juventus","Venezia",null,null],
+[12,"Lazio","Lecce",null,null],
+[12,"Milan","Frosinone",null,null],
+[12,"Monza","Fiorentina",null,null],
+[12,"Napoli","Torino",null,null],
+[12,"Parma","Roma",null,null],
+[12,"Sassuolo","Genoa",null,null],
+[13,"Cagliari","Milan",null,null],
+[13,"Como","Juventus",null,null],
+[13,"Frosinone","Parma",null,null],
+[13,"Inter","Genoa",null,null],
+[13,"Lecce","Atalanta",null,null],
+[13,"Roma","Monza",null,null],
+[13,"Sassuolo","Napoli",null,null],
+[13,"Torino","Lazio",null,null],
+[13,"Udinese","Fiorentina",null,null],
+[13,"Venezia","Bologna",null,null],
+[14,"Bologna","Roma",null,null],
+[14,"Fiorentina","Cagliari",null,null],
+[14,"Frosinone","Inter",null,null],
+[14,"Genoa","Torino",null,null],
+[14,"Juventus","Udinese",null,null],
+[14,"Lazio","Atalanta",null,null],
+[14,"Milan","Parma",null,null],
+[14,"Monza","Como",null,null],
+[14,"Napoli","Lecce",null,null],
+[14,"Venezia","Sassuolo",null,null],
+[15,"Atalanta","Genoa",null,null],
+[15,"Cagliari","Venezia",null,null],
+[15,"Como","Bologna",null,null],
+[15,"Inter","Torino",null,null],
+[15,"Juventus","Monza",null,null],
+[15,"Lazio","Roma",null,null],
+[15,"Lecce","Sassuolo",null,null],
+[15,"Napoli","Milan",null,null],
+[15,"Parma","Fiorentina",null,null],
+[15,"Udinese","Frosinone",null,null],
+[16,"Atalanta","Napoli",null,null],
+[16,"Fiorentina","Bologna",null,null],
+[16,"Frosinone","Lazio",null,null],
+[16,"Genoa","Udinese",null,null],
+[16,"Lecce","Inter",null,null],
+[16,"Milan","Como",null,null],
+[16,"Roma","Juventus",null,null],
+[16,"Sassuolo","Parma",null,null],
+[16,"Torino","Cagliari",null,null],
+[16,"Venezia","Monza",null,null],
+[17,"Bologna","Juventus",null,null],
+[17,"Cagliari","Genoa",null,null],
+[17,"Como","Lecce",null,null],
+[17,"Fiorentina","Lazio",null,null],
+[17,"Inter","Sassuolo",null,null],
+[17,"Monza","Milan",null,null],
+[17,"Parma","Napoli",null,null],
+[17,"Roma","Frosinone",null,null],
+[17,"Torino","Venezia",null,null],
+[17,"Udinese","Atalanta",null,null],
+[18,"Atalanta","Como",null,null],
+[18,"Frosinone","Bologna",null,null],
+[18,"Genoa","Monza",null,null],
+[18,"Juventus","Torino",null,null],
+[18,"Lazio","Inter",null,null],
+[18,"Lecce","Parma",null,null],
+[18,"Milan","Fiorentina",null,null],
+[18,"Napoli","Cagliari",null,null],
+[18,"Sassuolo","Udinese",null,null],
+[18,"Venezia","Roma",null,null],
+[19,"Bologna","Genoa",null,null],
+[19,"Cagliari","Sassuolo",null,null],
+[19,"Como","Lazio",null,null],
+[19,"Fiorentina","Lecce",null,null],
+[19,"Inter","Juventus",null,null],
+[19,"Monza","Frosinone",null,null],
+[19,"Parma","Venezia",null,null],
+[19,"Roma","Milan",null,null],
+[19,"Torino","Atalanta",null,null],
+[19,"Udinese","Napoli",null,null],
+[20,"Atalanta","Roma",null,null],
+[20,"Cagliari","Como",null,null],
+[20,"Juventus","Genoa",null,null],
+[20,"Lazio","Bologna",null,null],
+[20,"Lecce","Udinese",null,null],
+[20,"Milan","Torino",null,null],
+[20,"Napoli","Fiorentina",null,null],
+[20,"Parma","Inter",null,null],
+[20,"Sassuolo","Monza",null,null],
+[20,"Venezia","Frosinone",null,null],
+[21,"Bologna","Atalanta",null,null],
+[21,"Como","Napoli",null,null],
+[21,"Fiorentina","Sassuolo",null,null],
+[21,"Frosinone","Milan",null,null],
+[21,"Genoa","Parma",null,null],
+[21,"Inter","Venezia",null,null],
+[21,"Juventus","Cagliari",null,null],
+[21,"Lecce","Torino",null,null],
+[21,"Monza","Lazio",null,null],
+[21,"Roma","Udinese",null,null],
+[22,"Atalanta","Fiorentina",null,null],
+[22,"Cagliari","Parma",null,null],
+[22,"Genoa","Lecce",null,null],
+[22,"Lazio","Venezia",null,null],
+[22,"Milan","Juventus",null,null],
+[22,"Monza","Roma",null,null],
+[22,"Napoli","Inter",null,null],
+[22,"Sassuolo","Como",null,null],
+[22,"Torino","Frosinone",null,null],
+[22,"Udinese","Bologna",null,null],
+[23,"Atalanta","Lazio",null,null],
+[23,"Bologna","Milan",null,null],
+[23,"Como","Monza",null,null],
+[23,"Fiorentina","Udinese",null,null],
+[23,"Inter","Cagliari",null,null],
+[23,"Juventus","Sassuolo",null,null],
+[23,"Lecce","Napoli",null,null],
+[23,"Parma","Frosinone",null,null],
+[23,"Roma","Torino",null,null],
+[23,"Venezia","Genoa",null,null],
+[24,"Bologna","Como",null,null],
+[24,"Cagliari","Lazio",null,null],
+[24,"Frosinone","Fiorentina",null,null],
+[24,"Genoa","Atalanta",null,null],
+[24,"Inter","Milan",null,null],
+[24,"Monza","Lecce",null,null],
+[24,"Napoli","Juventus",null,null],
+[24,"Roma","Parma",null,null],
+[24,"Torino","Sassuolo",null,null],
+[24,"Udinese","Venezia",null,null],
+[25,"Atalanta","Monza",null,null],
+[25,"Como","Torino",null,null],
+[25,"Fiorentina","Inter",null,null],
+[25,"Juventus","Bologna",null,null],
+[25,"Lazio","Napoli",null,null],
+[25,"Lecce","Frosinone",null,null],
+[25,"Milan","Genoa",null,null],
+[25,"Sassuolo","Roma",null,null],
+[25,"Udinese","Parma",null,null],
+[25,"Venezia","Cagliari",null,null],
+[26,"Bologna","Lecce",null,null],
+[26,"Cagliari","Udinese",null,null],
+[26,"Como","Milan",null,null],
+[26,"Frosinone","Napoli",null,null],
+[26,"Genoa","Lazio",null,null],
+[26,"Inter","Atalanta",null,null],
+[26,"Monza","Juventus",null,null],
+[26,"Parma","Sassuolo",null,null],
+[26,"Roma","Venezia",null,null],
+[26,"Torino","Fiorentina",null,null],
+[27,"Atalanta","Torino",null,null],
+[27,"Fiorentina","Venezia",null,null],
+[27,"Juventus","Roma",null,null],
+[27,"Lazio","Frosinone",null,null],
+[27,"Lecce","Como",null,null],
+[27,"Milan","Cagliari",null,null],
+[27,"Monza","Genoa",null,null],
+[27,"Napoli","Parma",null,null],
+[27,"Sassuolo","Bologna",null,null],
+[27,"Udinese","Inter",null,null],
+[28,"Bologna","Napoli",null,null],
+[28,"Cagliari","Fiorentina",null,null],
+[28,"Como","Udinese",null,null],
+[28,"Frosinone","Monza",null,null],
+[28,"Genoa","Roma",null,null],
+[28,"Lazio","Juventus",null,null],
+[28,"Milan","Sassuolo",null,null],
+[28,"Parma","Lecce",null,null],
+[28,"Torino","Inter",null,null],
+[28,"Venezia","Atalanta",null,null],
+[29,"Atalanta","Milan",null,null],
+[29,"Fiorentina","Genoa",null,null],
+[29,"Inter","Frosinone",null,null],
+[29,"Juventus","Como",null,null],
+[29,"Monza","Bologna",null,null],
+[29,"Napoli","Venezia",null,null],
+[29,"Parma","Lazio",null,null],
+[29,"Roma","Lecce",null,null],
+[29,"Sassuolo","Cagliari",null,null],
+[29,"Udinese","Torino",null,null],
+[30,"Cagliari","Napoli",null,null],
+[30,"Como","Fiorentina",null,null],
+[30,"Frosinone","Udinese",null,null],
+[30,"Genoa","Inter",null,null],
+[30,"Lecce","Lazio",null,null],
+[30,"Milan","Monza",null,null],
+[30,"Roma","Bologna",null,null],
+[30,"Sassuolo","Atalanta",null,null],
+[30,"Torino","Juventus",null,null],
+[30,"Venezia","Parma",null,null],
+[31,"Bologna","Venezia",null,null],
+[31,"Cagliari","Atalanta",null,null],
+[31,"Fiorentina","Milan",null,null],
+[31,"Frosinone","Genoa",null,null],
+[31,"Inter","Roma",null,null],
+[31,"Juventus","Lecce",null,null],
+[31,"Lazio","Torino",null,null],
+[31,"Napoli","Sassuolo",null,null],
+[31,"Parma","Como",null,null],
+[31,"Udinese","Monza",null,null],
+[32,"Atalanta","Udinese",null,null],
+[32,"Bologna","Cagliari",null,null],
+[32,"Como","Frosinone",null,null],
+[32,"Fiorentina","Parma",null,null],
+[32,"Milan","Napoli",null,null],
+[32,"Monza","Inter",null,null],
+[32,"Roma","Lazio",null,null],
+[32,"Sassuolo","Lecce",null,null],
+[32,"Torino","Genoa",null,null],
+[32,"Venezia","Juventus",null,null],
+[33,"Cagliari","Monza",null,null],
+[33,"Frosinone","Roma",null,null],
+[33,"Genoa","Sassuolo",null,null],
+[33,"Inter","Bologna",null,null],
+[33,"Juventus","Fiorentina",null,null],
+[33,"Lazio","Como",null,null],
+[33,"Lecce","Milan",null,null],
+[33,"Napoli","Udinese",null,null],
+[33,"Parma","Atalanta",null,null],
+[33,"Venezia","Torino",null,null],
+[34,"Atalanta","Juventus",null,null],
+[34,"Bologna","Fiorentina",null,null],
+[34,"Como","Inter",null,null],
+[34,"Lecce","Cagliari",null,null],
+[34,"Milan","Lazio",null,null],
+[34,"Monza","Venezia",null,null],
+[34,"Roma","Napoli",null,null],
+[34,"Sassuolo","Frosinone",null,null],
+[34,"Torino","Parma",null,null],
+[34,"Udinese","Genoa",null,null],
+[35,"Fiorentina","Roma",null,null],
+[35,"Frosinone","Atalanta",null,null],
+[35,"Genoa","Cagliari",null,null],
+[35,"Inter","Lecce",null,null],
+[35,"Lazio","Sassuolo",null,null],
+[35,"Napoli","Monza",null,null],
+[35,"Parma","Milan",null,null],
+[35,"Torino","Bologna",null,null],
+[35,"Udinese","Juventus",null,null],
+[35,"Venezia","Como",null,null],
+[36,"Bologna","Frosinone",null,null],
+[36,"Cagliari","Torino",null,null],
+[36,"Como","Atalanta",null,null],
+[36,"Juventus","Inter",null,null],
+[36,"Lazio","Udinese",null,null],
+[36,"Lecce","Fiorentina",null,null],
+[36,"Milan","Roma",null,null],
+[36,"Monza","Parma",null,null],
+[36,"Napoli","Genoa",null,null],
+[36,"Sassuolo","Venezia",null,null],
+[37,"Atalanta","Lecce",null,null],
+[37,"Fiorentina","Monza",null,null],
+[37,"Frosinone","Cagliari",null,null],
+[37,"Genoa","Bologna",null,null],
+[37,"Inter","Lazio",null,null],
+[37,"Parma","Juventus",null,null],
+[37,"Roma","Como",null,null],
+[37,"Torino","Napoli",null,null],
+[37,"Udinese","Sassuolo",null,null],
+[37,"Venezia","Milan",null,null],
+[38,"Bologna","Parma",null,null],
+[38,"Cagliari","Roma",null,null],
+[38,"Como","Genoa",null,null],
+[38,"Juventus","Frosinone",null,null],
+[38,"Lazio","Fiorentina",null,null],
+[38,"Lecce","Venezia",null,null],
+[38,"Milan","Udinese",null,null],
+[38,"Monza","Torino",null,null],
+[38,"Napoli","Atalanta",null,null],
+[38,"Sassuolo","Inter",null,null]
+];
+
+const LIGUE1_FIXTURES = [
+[1,"Marseille","Strasbourg",4,0],
+[1,"Lens","Auxerre",5,2],
+[1,"LeMans","Brest",2,2],
+[1,"Nice","Lorient",0,0],
+[1,"Toulouse","Lyon",0,2],
+[1,"Troyes","ParisFC",0,0],
+[1,"Angers","Lille",0,2],
+[1,"Havre","Monaco",0,1],
+[1,"Rennes","PSG",2,2],
+[2,"Lille","PSG",2,2],
+[2,"Strasbourg","Lens",2,1],
+[2,"Auxerre","Angers",1,3],
+[2,"Brest","Toulouse",2,2],
+[2,"Lorient","Troyes",1,2],
+[2,"Lyon","Havre",1,1],
+[2,"ParisFC","Nice",3,0],
+[2,"Rennes","LeMans",3,2],
+[2,"Monaco","Marseille",2,0],
+[3,"Toulouse","Lille",0,1],
+[3,"Lyon","Auxerre",3,1],
+[3,"PSG","Monaco",1,2],
+[3,"Lens","Lorient",0,1],
+[3,"Havre","Brest",1,2],
+[3,"Nice","LeMans",1,1],
+[3,"Troyes","Strasbourg",null,null],
+[3,"Angers","Rennes",null,null],
+[3,"Marseille","ParisFC",null,null],
+[4,"Rennes","Marseille",null,null],
+[4,"Strasbourg","Monaco",null,null],
+[4,"Auxerre","Nice",null,null],
+[4,"Havre","Angers",null,null],
+[4,"Lorient","Toulouse",null,null],
+[4,"ParisFC","Lyon",null,null],
+[4,"Lille","Troyes",null,null],
+[4,"LeMans","Lens",null,null],
+[4,"Brest","PSG",null,null],
+[5,"Monaco","Lens",null,null],
+[5,"ParisFC","Strasbourg",null,null],
+[5,"Angers","Troyes",null,null],
+[5,"LeMans","Lorient",null,null],
+[5,"Lyon","Rennes",null,null],
+[5,"Toulouse","Havre",null,null],
+[5,"Auxerre","Brest",null,null],
+[5,"Nice","Lille",null,null],
+[5,"Marseille","PSG",null,null],
+[6,"Lens","Lyon",null,null],
+[6,"Lille","Havre",null,null],
+[6,"Brest","Angers",null,null],
+[6,"Lorient","ParisFC",null,null],
+[6,"Monaco","Toulouse",null,null],
+[6,"PSG","LeMans",null,null],
+[6,"Nice","Strasbourg",null,null],
+[6,"Rennes","Auxerre",null,null],
+[6,"Troyes","Marseille",null,null],
+[7,"LeMans","Toulouse",null,null],
+[7,"Strasbourg","PSG",null,null],
+[7,"Lille","Brest",null,null],
+[7,"Troyes","Lens",null,null],
+[7,"Angers","Marseille",null,null],
+[7,"Havre","Auxerre",null,null],
+[7,"Lorient","Monaco",null,null],
+[7,"ParisFC","Rennes",null,null],
+[7,"Lyon","Nice",null,null],
+[8,"Brest","Nice",null,null],
+[8,"Toulouse","Troyes",null,null],
+[8,"Lens","ParisFC",null,null],
+[8,"Monaco","Lille",null,null],
+[8,"Angers","Lorient",null,null],
+[8,"Auxerre","LeMans",null,null],
+[8,"Marseille","Havre",null,null],
+[8,"Rennes","Strasbourg",null,null],
+[8,"PSG","Lyon",null,null],
+[9,"Havre","PSG",null,null],
+[9,"Lille","Lens",null,null],
+[9,"Nice","Rennes",null,null],
+[9,"Lorient","Brest",null,null],
+[9,"Lyon","Angers",null,null],
+[9,"Troyes","LeMans",null,null],
+[9,"Strasbourg","Auxerre",null,null],
+[9,"ParisFC","Monaco",null,null],
+[9,"Marseille","Toulouse",null,null],
+[10,"Angers","Nice",null,null],
+[10,"Auxerre","ParisFC",null,null],
+[10,"Brest","Lyon",null,null],
+[10,"Havre","Lorient",null,null],
+[10,"LeMans","Monaco",null,null],
+[10,"Lens","Marseille",null,null],
+[10,"PSG","Troyes",null,null],
+[10,"Rennes","Lille",null,null],
+[10,"Toulouse","Strasbourg",null,null],
+[11,"Lens","Toulouse",null,null],
+[11,"Lille","Lyon",null,null],
+[11,"Lorient","Rennes",null,null],
+[11,"Marseille","LeMans",null,null],
+[11,"Monaco","Auxerre",null,null],
+[11,"Nice","PSG",null,null],
+[11,"ParisFC","Angers",null,null],
+[11,"Strasbourg","Brest",null,null],
+[11,"Troyes","Havre",null,null],
+[12,"Angers","Lens",null,null],
+[12,"Auxerre","Marseille",null,null],
+[12,"Brest","ParisFC",null,null],
+[12,"Havre","Strasbourg",null,null],
+[12,"LeMans","Lille",null,null],
+[12,"Lyon","Monaco",null,null],
+[12,"Nice","Troyes",null,null],
+[12,"PSG","Lorient",null,null],
+[12,"Toulouse","Rennes",null,null],
+[13,"Lens","Havre",null,null],
+[13,"Lille","Auxerre",null,null],
+[13,"Marseille","Nice",null,null],
+[13,"Monaco","Angers",null,null],
+[13,"ParisFC","LeMans",null,null],
+[13,"Rennes","Brest",null,null],
+[13,"Strasbourg","Lorient",null,null],
+[13,"Toulouse","PSG",null,null],
+[13,"Troyes","Lyon",null,null],
+[14,"Angers","Strasbourg",null,null],
+[14,"Auxerre","Toulouse",null,null],
+[14,"Brest","Troyes",null,null],
+[14,"Havre","LeMans",null,null],
+[14,"Lorient","Lille",null,null],
+[14,"Lyon","Marseille",null,null],
+[14,"Nice","Lens",null,null],
+[14,"PSG","ParisFC",null,null],
+[14,"Rennes","Monaco",null,null],
+[15,"Brest","Marseille",null,null],
+[15,"LeMans","Lyon",null,null],
+[15,"Lens","PSG",null,null],
+[15,"Lille","Strasbourg",null,null],
+[15,"Lorient","Auxerre",null,null],
+[15,"Monaco","Nice",null,null],
+[15,"ParisFC","Havre",null,null],
+[15,"Toulouse","Angers",null,null],
+[15,"Troyes","Rennes",null,null],
+[16,"Angers","PSG",null,null],
+[16,"Auxerre","Troyes",null,null],
+[16,"Lyon","Lorient",null,null],
+[16,"Marseille","Lille",null,null],
+[16,"Monaco","Brest",null,null],
+[16,"Nice","Havre",null,null],
+[16,"ParisFC","Toulouse",null,null],
+[16,"Rennes","Lens",null,null],
+[16,"Strasbourg","LeMans",null,null],
+[17,"Havre","Rennes",null,null],
+[17,"LeMans","Angers",null,null],
+[17,"Lens","Brest",null,null],
+[17,"Lille","ParisFC",null,null],
+[17,"Lorient","Marseille",null,null],
+[17,"PSG","Auxerre",null,null],
+[17,"Strasbourg","Lyon",null,null],
+[17,"Toulouse","Nice",null,null],
+[17,"Troyes","Monaco",null,null],
+[18,"Angers","Havre",null,null],
+[18,"Brest","Strasbourg",null,null],
+[18,"LeMans","Nice",null,null],
+[18,"Lyon","Lille",null,null],
+[18,"Marseille","Troyes",null,null],
+[18,"Monaco","PSG",null,null],
+[18,"ParisFC","Auxerre",null,null],
+[18,"Rennes","Lorient",null,null],
+[18,"Toulouse","Lens",null,null],
+[19,"Auxerre","Monaco",null,null],
+[19,"Havre","Toulouse",null,null],
+[19,"Lens","Angers",null,null],
+[19,"Lorient","LeMans",null,null],
+[19,"Nice","Brest",null,null],
+[19,"PSG","Marseille",null,null],
+[19,"Rennes","Lyon",null,null],
+[19,"Strasbourg","ParisFC",null,null],
+[19,"Troyes","Lille",null,null],
+[20,"Auxerre","Strasbourg",null,null],
+[20,"Brest","Rennes",null,null],
+[20,"LeMans","PSG",null,null],
+[20,"Lille","Nice",null,null],
+[20,"Lorient","Havre",null,null],
+[20,"Lyon","Lens",null,null],
+[20,"Marseille","Angers",null,null],
+[20,"ParisFC","Troyes",null,null],
+[20,"Toulouse","Monaco",null,null],
+[21,"Angers","ParisFC",null,null],
+[21,"Havre","Lyon",null,null],
+[21,"Lille","Lorient",null,null],
+[21,"Monaco","LeMans",null,null],
+[21,"Nice","Auxerre",null,null],
+[21,"PSG","Brest",null,null],
+[21,"Rennes","Toulouse",null,null],
+[21,"Strasbourg","Marseille",null,null],
+[21,"Lens","Troyes",null,null],
+[22,"Auxerre","Lille",null,null],
+[22,"Brest","Monaco",null,null],
+[22,"LeMans","ParisFC",null,null],
+[22,"Lorient","Angers",null,null],
+[22,"Lyon","Toulouse",null,null],
+[22,"Marseille","Rennes",null,null],
+[22,"PSG","Lens",null,null],
+[22,"Strasbourg","Havre",null,null],
+[22,"Troyes","Nice",null,null],
+[23,"Angers","Auxerre",null,null],
+[23,"Havre","Nice",null,null],
+[23,"Lens","Strasbourg",null,null],
+[23,"Lille","Marseille",null,null],
+[23,"Monaco","Lyon",null,null],
+[23,"ParisFC","Brest",null,null],
+[23,"Rennes","PSG",null,null],
+[23,"Toulouse","LeMans",null,null],
+[23,"Troyes","Lorient",null,null],
+[24,"Auxerre","PSG",null,null],
+[24,"Brest","Lille",null,null],
+[24,"Havre","Lens",null,null],
+[24,"LeMans","Rennes",null,null],
+[24,"Lyon","Troyes",null,null],
+[24,"Marseille","Monaco",null,null],
+[24,"Nice","Toulouse",null,null],
+[24,"ParisFC","Lorient",null,null],
+[24,"Strasbourg","Angers",null,null],
+[25,"Angers","LeMans",null,null],
+[25,"Lens","Lille",null,null],
+[25,"Lorient","Nice",null,null],
+[25,"Marseille","Lyon",null,null],
+[25,"Monaco","Havre",null,null],
+[25,"PSG","Strasbourg",null,null],
+[25,"Rennes","ParisFC",null,null],
+[25,"Toulouse","Brest",null,null],
+[25,"Troyes","Auxerre",null,null],
+[26,"Angers","Monaco",null,null],
+[26,"Auxerre","Lens",null,null],
+[26,"Brest","Lorient",null,null],
+[26,"Havre","Troyes",null,null],
+[26,"LeMans","Marseille",null,null],
+[26,"Lille","Rennes",null,null],
+[26,"Nice","Lyon",null,null],
+[26,"ParisFC","PSG",null,null],
+[26,"Strasbourg","Toulouse",null,null],
+[27,"LeMans","Auxerre",null,null],
+[27,"Lille","Toulouse",null,null],
+[27,"Lorient","Lens",null,null],
+[27,"Lyon","Strasbourg",null,null],
+[27,"Marseille","Brest",null,null],
+[27,"Monaco","Rennes",null,null],
+[27,"Nice","ParisFC",null,null],
+[27,"PSG","Havre",null,null],
+[27,"Troyes","Angers",null,null],
+[28,"Angers","Lyon",null,null],
+[28,"Auxerre","Lorient",null,null],
+[28,"Brest","LeMans",null,null],
+[28,"Havre","Marseille",null,null],
+[28,"Lens","Nice",null,null],
+[28,"Monaco","Strasbourg",null,null],
+[28,"PSG","Lille",null,null],
+[28,"Rennes","Troyes",null,null],
+[28,"Toulouse","ParisFC",null,null],
+[29,"LeMans","Havre",null,null],
+[29,"Lille","Monaco",null,null],
+[29,"Lorient","PSG",null,null],
+[29,"Lyon","Brest",null,null],
+[29,"Marseille","Auxerre",null,null],
+[29,"Nice","Angers",null,null],
+[29,"ParisFC","Lens",null,null],
+[29,"Strasbourg","Rennes",null,null],
+[29,"Troyes","Toulouse",null,null],
+[30,"Auxerre","Lyon",null,null],
+[30,"Havre","ParisFC",null,null],
+[30,"Lens","LeMans",null,null],
+[30,"Monaco","Lorient",null,null],
+[30,"PSG","Angers",null,null],
+[30,"Rennes","Nice",null,null],
+[30,"Strasbourg","Lille",null,null],
+[30,"Toulouse","Marseille",null,null],
+[30,"Troyes","Brest",null,null],
+[31,"Angers","Toulouse",null,null],
+[31,"Brest","Auxerre",null,null],
+[31,"LeMans","Troyes",null,null],
+[31,"Lens","Monaco",null,null],
+[31,"Lorient","Strasbourg",null,null],
+[31,"Lyon","PSG",null,null],
+[31,"Nice","Marseille",null,null],
+[31,"ParisFC","Lille",null,null],
+[31,"Rennes","Havre",null,null],
+[32,"Auxerre","Rennes",null,null],
+[32,"Brest","Havre",null,null],
+[32,"Lille","Angers",null,null],
+[32,"Lyon","LeMans",null,null],
+[32,"Marseille","Lens",null,null],
+[32,"Monaco","ParisFC",null,null],
+[32,"PSG","Nice",null,null],
+[32,"Strasbourg","Troyes",null,null],
+[32,"Toulouse","Lorient",null,null],
+[33,"Angers","Brest",null,null],
+[33,"Havre","Lille",null,null],
+[33,"LeMans","Strasbourg",null,null],
+[33,"Lens","Rennes",null,null],
+[33,"Lorient","Lyon",null,null],
+[33,"Nice","Monaco",null,null],
+[33,"ParisFC","Marseille",null,null],
+[33,"Toulouse","Auxerre",null,null],
+[33,"Troyes","PSG",null,null],
+[34,"Auxerre","Havre",null,null],
+[34,"Brest","Lens",null,null],
+[34,"Lille","LeMans",null,null],
+[34,"Lyon","ParisFC",null,null],
+[34,"Marseille","Lorient",null,null],
+[34,"Monaco","Troyes",null,null],
+[34,"PSG","Toulouse",null,null],
+[34,"Rennes","Angers",null,null],
+[34,"Strasbourg","Nice",null,null]
 ];
 
 // ---------- DATES (DD/MM), same order as fixtures arrays ----------
@@ -429,165 +1139,15 @@ const BL_DATES = [
 "22/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05"
 ];
 
+const SERIEA_DATES = ["22/08","22/08","22/08","22/08","23/08","23/08","23/08","23/08","24/08","24/08","28/08","29/08","29/08","29/08","29/08","30/08","30/08","30/08","31/08","31/08","04/09","05/09","05/09","05/09","06/09","06/09","06/09","06/09","07/09","07/09","11/09","12/09","12/09","12/09","13/09","13/09","13/09","14/09","14/09","14/09","18/09","19/09","19/09","19/09","19/09","20/09","20/09","20/09","20/09","20/09","10/10","10/10","10/10","10/10","10/10","10/10","10/10","10/10","10/10","10/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","27/10","27/10","27/10","27/10","27/10","27/10","27/10","27/10","27/10","27/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11","07/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11","21/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11","28/11","05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12","05/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12","12/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12","19/12","02/01","02/01","02/01","02/01","02/01","02/01","02/01","02/01","02/01","02/01","05/01","05/01","05/01","05/01","05/01","05/01","05/01","05/01","05/01","05/01","09/01","09/01","09/01","09/01","09/01","09/01","09/01","09/01","09/01","09/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01","16/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01","23/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01","30/01","06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02","06/02","13/02","13/02","13/02","13/02","13/02","13/02","13/02","13/02","13/02","13/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02","20/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02","27/02","06/03","06/03","06/03","06/03","06/03","06/03","06/03","06/03","06/03","06/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03","13/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03","20/03","03/04","03/04","03/04","03/04","03/04","03/04","03/04","03/04","03/04","03/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04","10/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04","17/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04","24/04","01/05","01/05","01/05","01/05","01/05","01/05","01/05","01/05","01/05","01/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05","08/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05","22/05","29/05","29/05","29/05","29/05","29/05","29/05","29/05","29/05","29/05","29/05"];
+const LIGUE1_DATES = ["21/08","22/08","22/08","22/08","22/08","22/08","23/08","23/08","23/08","28/08","29/08","29/08","29/08","29/08","29/08","30/08","30/08","30/08","03/09","04/09","04/09","05/09","05/09","05/09","06/09","06/09","06/09","11/09","12/09","12/09","12/09","12/09","12/09","13/09","13/09","13/09","18/09","19/09","19/09","19/09","19/09","19/09","20/09","20/09","20/09","10/10","10/10","10/10","10/10","10/10","10/10","10/10","10/10","10/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","17/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","24/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","31/10","06/11","06/11","06/11","06/11","06/11","06/11","06/11","06/11","06/11","20/11","20/11","20/11","20/11","20/11","20/11","20/11","20/11","20/11","27/11","27/11","27/11","27/11","27/11","27/11","27/11","27/11","27/11","04/12","04/12","04/12","04/12","04/12","04/12","04/12","04/12","04/12","11/12","11/12","11/12","11/12","11/12","11/12","11/12","11/12","11/12","01/01","01/01","01/01","01/01","01/01","01/01","01/01","01/01","01/01","15/01","15/01","15/01","15/01","15/01","15/01","15/01","15/01","15/01","22/01","22/01","22/01","22/01","22/01","22/01","22/01","22/01","22/01","29/01","29/01","29/01","29/01","29/01","29/01","29/01","29/01","29/01","05/02","05/02","05/02","05/02","05/02","05/02","05/02","05/02","05/02","12/02","12/02","12/02","12/02","12/02","12/02","12/02","12/02","12/02","19/02","19/02","19/02","19/02","19/02","19/02","19/02","19/02","19/02","26/02","26/02","26/02","26/02","26/02","26/02","26/02","26/02","26/02","05/03","05/03","05/03","05/03","05/03","05/03","05/03","05/03","05/03","12/03","12/03","12/03","12/03","12/03","12/03","12/03","12/03","12/03","19/03","19/03","19/03","19/03","19/03","19/03","19/03","19/03","19/03","02/04","02/04","02/04","02/04","02/04","02/04","02/04","02/04","02/04","09/04","09/04","09/04","09/04","09/04","09/04","09/04","09/04","09/04","16/04","16/04","16/04","16/04","16/04","16/04","16/04","16/04","16/04","23/04","23/04","23/04","23/04","23/04","23/04","23/04","23/04","23/04","30/04","30/04","30/04","30/04","30/04","30/04","30/04","30/04","30/04","07/05","07/05","07/05","07/05","07/05","07/05","07/05","07/05","07/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","15/05","21/05","21/05","21/05","21/05","21/05","21/05","21/05","21/05","21/05","28/05","28/05","28/05","28/05","28/05","28/05","28/05","28/05","28/05"];
+
 function getDates(league) {
   if (league === "epl") return EPL_DATES;
   if (league === "liga") return LIGA_DATES;
-  return BL_DATES;
-}
-
-// ---------- LIVE API MODE (football-data.org, 12 free competitions) ----------
-const API_COMPETITIONS = [
-  {code:"PL", name:"Premier League (Αγγλία)"},
-  {code:"PD", name:"La Liga (Ισπανία)"},
-  {code:"BL1", name:"Bundesliga (Γερμανία)"},
-  {code:"SA", name:"Serie A (Ιταλία)"},
-  {code:"FL1", name:"Ligue 1 (Γαλλία)"},
-  {code:"CL", name:"Champions League"},
-  {code:"DED", name:"Eredivisie (Ολλανδία)"},
-  {code:"PPL", name:"Primeira Liga (Πορτογαλία)"},
-  {code:"ELC", name:"Championship (Αγγλία, Β')"},
-  {code:"BSA", name:"Brasileirão (Βραζιλία)"},
-  {code:"WC", name:"Παγκόσμιο Κύπελλο"},
-  {code:"EC", name:"Euro (Εθνικές Ομάδες)"}
-];
-
-function getWorkerUrl() { return (localStorage.getItem("protathlimata_worker_url") || "").trim().replace(/\/$/, ""); }
-function setWorkerUrl(u) { localStorage.setItem("protathlimata_worker_url", u.trim().replace(/\/$/, "")); }
-
-// Το football-data.org (δωρεάν πλάνο) δεν επιτρέπει απευθείας κλήσεις από browser (CORS).
-// Αντί για public proxy τρίτων, καλούμε το δικό σου Cloudflare Worker (βλ. cloudflare-worker.js),
-// που κρατάει το API key του football-data.org μυστικό και προσθέτει τα σωστά CORS headers.
-async function apiFetch(path) {
-  const base = getWorkerUrl();
-  if (!base) throw new Error("NOKEY");
-  const res = await fetch(base + path);
-  if (res.status === 429) throw new Error("RATE_LIMIT");
-  if (res.status === 403) throw new Error("FORBIDDEN");
-  if (!res.ok) throw new Error("HTTP_" + res.status);
-  return res.json();
-}
-
-let apiCache = {};
-
-async function loadCompetition(code) {
-  const statusEl = document.getElementById("apiStatus");
-  statusEl.textContent = "Φόρτωση...";
-  try {
-    const [standingsData, matchesData] = await Promise.all([
-      apiFetch(`/competitions/${code}/standings`),
-      apiFetch(`/competitions/${code}/matches`)
-    ]);
-    apiCache[code] = { standings: standingsData, matches: matchesData.matches };
-    statusEl.textContent = "Ενημερώθηκε: " + new Date().toLocaleTimeString('el-GR');
-    renderApiView(code);
-  } catch (e) {
-    if (e.message === "NOKEY") statusEl.textContent = "⚠️ Βάλε πρώτα το URL του Worker σου και πάτα Αποθήκευση.";
-    else if (e.message === "RATE_LIMIT") statusEl.textContent = "⚠️ Έφτασες το όριο αιτημάτων (10/λεπτό). Δοκίμασε ξανά σε λίγο.";
-    else if (e.message === "FORBIDDEN") statusEl.textContent = "⚠️ Μη έγκυρο API key στο Worker σου, ή αυτό το πρωτάθλημα δεν καλύπτεται στο δωρεάν πλάνο σου.";
-    else statusEl.textContent = "⚠️ Σφάλμα σύνδεσης (" + e.message + "). Δοκίμασε ξανά σε λίγο.";
-  }
-}
-
-function renderSimpleSplit(table) {
-  let h = `<table><thead><tr><th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Πόντοι</th></tr></thead><tbody>`;
-  table.forEach((row,i) => {
-    h += `<tr><td>${i+1}</td><td class="team">${row.team.name}</td><td>${row.playedGames}</td><td class="pts">${row.points}</td></tr>`;
-  });
-  h += `</tbody></table>`;
-  return h;
-}
-
-function renderApiView(code) {
-  const cache = apiCache[code];
-  if (!cache) return;
-  const total = cache.standings.standings.find(s=>s.type==="TOTAL");
-  const home = cache.standings.standings.find(s=>s.type==="HOME");
-  const away = cache.standings.standings.find(s=>s.type==="AWAY");
-
-  let html = `<table><thead><tr><th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Ν</th><th>Ι</th><th>Η</th><th>ΓΥ</th><th>ΓΚ</th><th>Δ</th><th>Β</th></tr></thead><tbody>`;
-  (total ? total.table : []).forEach(row => {
-    html += `<tr><td>${row.position}</td><td class="team">${row.team.name}</td><td>${row.playedGames}</td><td>${row.won}</td><td>${row.draw}</td><td>${row.lost}</td><td>${row.goalsFor}</td><td>${row.goalsAgainst}</td><td>${row.goalDifference>0?'+':''}${row.goalDifference}</td><td class="pts">${row.points}</td></tr>`;
-  });
-  html += `</tbody></table>`;
-  if (home && away) {
-    html += `<div class="split-wrap">
-      <div><div class="split-title">🏠 Εντός</div>${renderSimpleSplit(home.table)}</div>
-      <div><div class="split-title">✈️ Εκτός</div>${renderSimpleSplit(away.table)}</div>
-    </div>`;
-  }
-  document.getElementById("apiStandings").innerHTML = html;
-
-  // build simple form-weighted attack/defense from finished matches (no prior-season data available generically)
-  const matches = cache.matches;
-  const finished = matches.filter(m => m.status==="FINISHED" && m.score && m.score.fullTime.home!==null)
-    .sort((a,b) => new Date(a.utcDate)-new Date(b.utcDate));
-  const logs = {};
-  finished.forEach(m => {
-    const h=m.homeTeam.name, a=m.awayTeam.name, hg=m.score.fullTime.home, ag=m.score.fullTime.away;
-    if (!logs[h]) logs[h]=[]; if (!logs[a]) logs[a]=[];
-    logs[h].push({gf:hg,ga:ag}); logs[a].push({gf:ag,ga:hg});
-  });
-  const leagueAvg = finished.length
-    ? finished.reduce((s,m)=>s+m.score.fullTime.home+m.score.fullTime.away,0)/(finished.length*2)
-    : 1.3;
-
-  function strength(team) {
-    const log = logs[team] || [];
-    const RECENT_N=5, RECENT_W=2, K=4;
-    let wSum=K, gfSum=leagueAvg*K, gaSum=leagueAvg*K;
-    log.forEach((g,idx) => {
-      const w = idx >= log.length-RECENT_N ? RECENT_W : 1;
-      wSum+=w; gfSum+=g.gf*w; gaSum+=g.ga*w;
-    });
-    return { attack: gfSum/wSum, defense: gaSum/wSum };
-  }
-  function predict(h,a) {
-    const H=strength(h), A=strength(a);
-    const HOME_ADV=1.12;
-    const eh=(H.attack*A.defense/leagueAvg)*HOME_ADV;
-    const ea=(A.attack*H.defense/leagueAvg)/HOME_ADV;
-    return [Math.max(0,Math.round(eh)), Math.max(0,Math.round(ea))];
-  }
-
-  const byDay = {};
-  matches.forEach(m => { const d=m.matchday||0; (byDay[d]=byDay[d]||[]).push(m); });
-  let fx = "";
-  Object.keys(byDay).sort((a,b)=>a-b).forEach(day => {
-    fx += `<div class="mw-header" data-day="${day}"><span class="mw-title">Αγωνιστική ${day}</span></div><div class="mw-body hidden" id="apimw-${day}">`;
-    byDay[day].forEach(m => {
-      const dateStr = new Date(m.utcDate).toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit'});
-      const h=m.homeTeam.name, a=m.awayTeam.name;
-      fx += `<div class="match-row-wrap"><div class="match-date">${dateStr}</div>`;
-      if (m.status==="FINISHED" && m.score && m.score.fullTime.home!==null) {
-        fx += `<div class="match-row"><span class="home">${h}</span><span>${m.score.fullTime.home} - ${m.score.fullTime.away}</span><span class="away">${a}</span></div>`;
-      } else {
-        const [ph,pa] = predict(h,a);
-        fx += `<div class="match-row"><span class="home">${h}</span><span class="dash">vs</span><span class="away">${a}</span></div><div class="predict-hint">🔮 πιθανό: ${ph}-${pa}</div>`;
-      }
-      fx += `</div>`;
-    });
-    fx += `</div>`;
-  });
-  document.getElementById("apiFixtures").innerHTML = fx;
-  document.querySelectorAll("#apiFixtures .mw-header").forEach(hdr => {
-    hdr.addEventListener("click", () => {
-      document.getElementById("apimw-"+hdr.dataset.day).classList.toggle("hidden");
-    });
-  });
-}
-
-function initApiMode() {
-  const sel = document.getElementById("compSelect");
-  sel.innerHTML = API_COMPETITIONS.map(c => `<option value="${c.code}">${c.name}</option>`).join("");
-  const urlInput = document.getElementById("workerUrlInput");
-  urlInput.value = getWorkerUrl();
-  document.getElementById("saveKeyBtn").addEventListener("click", () => {
-    setWorkerUrl(urlInput.value);
-    document.getElementById("apiStatus").textContent = "✅ Αποθηκεύτηκε το URL.";
-  });
-  document.getElementById("refreshApiBtn").addEventListener("click", () => {
-    loadCompetition(sel.value);
-  });
+  if (league === "bundesliga") return BL_DATES;
+  if (league === "seriea") return SERIEA_DATES;
+  return LIGUE1_DATES;
 }
 
 // ---------- STATE ----------
@@ -596,7 +1156,8 @@ let currentView = "table";
 
 function loadFixtures(league) {
   const key = "protathlimata_" + league + "_v1";
-  const base = league === "epl" ? EPL_FIXTURES : (league === "liga" ? LIGA_FIXTURES : BL_FIXTURES);
+  const BASES = { epl: EPL_FIXTURES, liga: LIGA_FIXTURES, bundesliga: BL_FIXTURES, seriea: SERIEA_FIXTURES, ligue1: LIGUE1_FIXTURES };
+  const base = BASES[league];
   const saved = localStorage.getItem(key);
   if (saved) {
     try {
@@ -625,16 +1186,22 @@ function saveScore(league, round, home, away, hg, ag) {
 let eplData = loadFixtures("epl");
 let ligaData = loadFixtures("liga");
 let blData = loadFixtures("bundesliga");
+let seriaData = loadFixtures("seriea");
+let ligue1Data = loadFixtures("ligue1");
 
 function getData(league) {
   if (league === "epl") return eplData;
   if (league === "liga") return ligaData;
-  return blData;
+  if (league === "bundesliga") return blData;
+  if (league === "seriea") return seriaData;
+  return ligue1Data;
 }
 function getNames(league) {
   if (league === "epl") return EPL_NAMES;
   if (league === "liga") return LIGA_NAMES;
-  return BL_NAMES;
+  if (league === "bundesliga") return BL_NAMES;
+  if (league === "seriea") return SERIEA_NAMES;
+  return LIGUE1_NAMES;
 }
 
 // ---------- STANDINGS CALC ----------
@@ -683,11 +1250,55 @@ const PRIOR_BL = {
   "Augsburg":[45,61], "Mainz":[44,53], "UnionBerlin":[44,58], "Gladbach":[42,53],
   "Hamburg":[40,54], "Koln":[49,63], "Bremen":[37,60]
 };
+const PRIOR_SERIEA = {
+"Atalanta":[51,36],
+"Bologna":[49,46],
+"Cagliari":[40,53],
+"Como":[65,29],
+"Cremonese":[32,57],
+"Fiorentina":[41,50],
+"Genoa":[41,51],
+"Hellas Verona":[25,61],
+"Inter":[89,35],
+"Juventus":[61,34],
+"Lazio":[41,40],
+"Lecce":[28,50],
+"Milan":[53,35],
+"Napoli":[58,36],
+"Parma":[28,46],
+"Pisa":[26,71],
+"Roma":[59,31],
+"Sassuolo":[46,50],
+"Torino":[44,63],
+"Udinese":[45,48]
+};
+const PRIOR_LIGUE1 = {
+"Angers":[29,48],
+"Auxerre":[34,44],
+"Brest":[43,55],
+"Havre":[32,44],
+"Lens":[66,35],
+"Lille":[52,37],
+"Lorient":[48,51],
+"Lyon":[51,37],
+"Marseille":[60,43],
+"Metz":[32,76],
+"Monaco":[60,54],
+"Nantes":[29,55],
+"Nice":[37,60],
+"PSG":[77,29],
+"ParisFC":[47,50],
+"Rennes":[59,50],
+"Strasbourg":[58,47],
+"Toulouse":[47,46]
+};
 // teams with no top-flight data last season (promoted) get a below-average default
 function getPriorInfo(league) {
   if (league === "epl") return { data: PRIOR_EPL, games: 38, avg: 1.375, promoted: [37,69] };
   if (league === "liga") return { data: PRIOR_LIGA, games: 38, avg: 1.347, promoted: [37,57] };
-  return { data: PRIOR_BL, games: 34, avg: 1.618, promoted: [38,67] };
+  if (league === "bundesliga") return { data: PRIOR_BL, games: 34, avg: 1.618, promoted: [38,67] };
+  if (league === "seriea") return { data: PRIOR_SERIEA, games: 38, avg: 1.213, promoted: [28,63] };
+  return { data: PRIOR_LIGUE1, games: 34, avg: 1.412, promoted: [31,66] };
 }
 
 function getTeamLogs(fixtures) {
@@ -896,9 +1507,9 @@ function renderFixturesView() {
       accuracyBadges = `<span class="acc-badge acc-yellow" title="Σωστός νικητής/ισοπαλία">🟡 ${resultPct}%</span><span class="acc-badge acc-green" title="Ακριβές σκορ">🟢 ${exactPct}%</span>`;
     }
 
-    html += `<div class="mw-header ${done?'done':''}" data-round="${r}">
+    html += `<div class="mw-header ${done?'done':''}" data-round="${r}" id="mwheader-${r}">
       <span class="mw-title">Αγωνιστική ${r} <span class="mw-date">(${dateLabel})</span></span>
-      <span class="mw-status-wrap">${accuracyBadges}<span class="mw-status">${playedCount}/${matches.length} ${done?'✓':''}</span></span>
+      <span class="mw-status-wrap" id="mwstatuswrap-${r}">${accuracyBadges}<span class="mw-status">${playedCount}/${matches.length} ${done?'✓':''}</span></span>
     </div>
     <div class="mw-body hidden" id="mwbody-${r}">`;
     entries.forEach(({m, i}) => {
@@ -926,12 +1537,12 @@ function renderFixturesView() {
       <div class="match-row">
         <span class="home">${names[h]}</span>
         <span class="score-inputs">
-          <input type="number" min="0" max="20" data-round="${rr}" data-home="${h}" data-away="${a}" data-side="h" value="${hg===null?'':hg}">
+          <input type="number" min="0" max="20" data-idx="${i}" data-side="h" value="${hg===null?'':hg}">
           <span class="dash">-</span>
-          <input type="number" min="0" max="20" data-round="${rr}" data-home="${h}" data-away="${a}" data-side="a" value="${ag===null?'':ag}">
+          <input type="number" min="0" max="20" data-idx="${i}" data-side="a" value="${ag===null?'':ag}">
         </span>
         <span class="away">${names[a]}</span>
-      </div>${predictHint}</div>`;
+      </div><div id="hint-${i}">${predictHint}</div></div>`;
     });
     html += `</div>`;
   });
@@ -945,25 +1556,402 @@ function renderFixturesView() {
     });
   });
 
-  // score inputs
+  // score inputs — update only this match + its round header, never rebuild the whole list
   document.querySelectorAll(".score-inputs input").forEach(inp => {
     inp.addEventListener("change", () => {
-      const round = parseInt(inp.dataset.round);
-      const home = inp.dataset.home;
-      const away = inp.dataset.away;
-      const data = getData(currentLeague);
-      const match = data.find(m => m[0]===round && m[1]===home && m[2]===away);
-      const homeInput = document.querySelector(`input[data-round="${round}"][data-home="${home}"][data-away="${away}"][data-side="h"]`);
-      const awayInput = document.querySelector(`input[data-round="${round}"][data-home="${home}"][data-away="${away}"][data-side="a"]`);
+      const idx = parseInt(inp.dataset.idx);
+      const league = currentLeague;
+      const fixtures = getData(league);
+      const match = fixtures[idx];
+      const [round, home, away] = match;
+      const homeInput = document.querySelector(`input[data-idx="${idx}"][data-side="h"]`);
+      const awayInput = document.querySelector(`input[data-idx="${idx}"][data-side="a"]`);
       const hv = homeInput.value === "" ? null : parseInt(homeInput.value);
       const av = awayInput.value === "" ? null : parseInt(awayInput.value);
       match[3] = (hv===null || isNaN(hv)) ? null : hv;
       match[4] = (av===null || isNaN(av)) ? null : av;
-      saveScore(currentLeague, round, home, away, match[3], match[4]);
-      saveH2H(currentLeague, home, away, match[3], match[4]);
-      renderFixturesView();
+      saveScore(league, round, home, away, match[3], match[4]);
+      saveH2H(league, home, away, match[3], match[4]);
+      updateMatchDisplay(league, fixtures, idx);
       renderTableView();
     });
+  });
+}
+
+function updateMatchDisplay(league, fixtures, idx) {
+  const names = getNames(league);
+  const [r, h, a, hg, ag] = fixtures[idx];
+  const [ph,pa] = predictScore(fixtures, h, a, r, league);
+  const [p1,pX,p2] = predictProbabilities(fixtures, h, a, r, league);
+  const h2hCount = getH2HRecords(h, a).filter(rec => !(rec.league===league && rec.home===h && rec.away===a)).length;
+  const h2hNote = h2hCount > 0 ? ` <span class="h2h-tag">βάσει ${h2hCount} προηγ.</span>` : "";
+  const probsLine = `<div class="probs-line">${p1}% · ${pX}% Χ · ${p2}%${h2hNote}</div>`;
+  let predictHint = "";
+  if (hg === null || ag === null) {
+    predictHint = `<div class="predict-hint">🔮 πιθανό: ${ph}-${pa}</div>${probsLine}`;
+  } else {
+    const exactHit = (ph===hg && pa===ag);
+    const actualResult = hg>ag?'H':(hg<ag?'A':'D');
+    const predResult = ph>pa?'H':(ph<pa?'A':'D');
+    const resultHit = actualResult === predResult;
+    const cls = exactHit ? 'hit-exact' : (resultHit ? 'hit-result' : 'hit-miss');
+    const label = exactHit ? '✅ ακριβές' : (resultHit ? '🟡 σωστό αποτέλεσμα' : '❌');
+    predictHint = `<div class="predict-hint ${cls}">🔮 πρόβλεψη ήταν: ${ph}-${pa} · ${label}</div>`;
+  }
+  const hintEl = document.getElementById("hint-"+idx);
+  if (hintEl) hintEl.innerHTML = predictHint;
+  updateRoundHeader(league, fixtures, r);
+}
+
+function updateRoundHeader(league, fixtures, r) {
+  const entries = [];
+  fixtures.forEach((m,i) => { if (m[0]===r) entries.push(m); });
+  const playedCount = entries.filter(m=>m[3]!==null).length;
+  const done = playedCount === entries.length;
+  let resultHits=0, exactHits=0;
+  entries.forEach(([rr,h,a,hg,ag]) => {
+    if (hg===null||ag===null) return;
+    const [ph,pa] = predictScore(fixtures, h, a, rr, league);
+    const actualResult = hg>ag?'H':(hg<ag?'A':'D');
+    const predResult = ph>pa?'H':(ph<pa?'A':'D');
+    if (actualResult===predResult) resultHits++;
+    if (ph===hg && pa===ag) exactHits++;
+  });
+  let accuracyBadges = "";
+  if (playedCount>0) {
+    const resultPct = Math.round(resultHits/playedCount*100);
+    const exactPct = Math.round(exactHits/playedCount*100);
+    accuracyBadges = `<span class="acc-badge acc-yellow" title="Σωστός νικητής/ισοπαλία">🟡 ${resultPct}%</span><span class="acc-badge acc-green" title="Ακριβές σκορ">🟢 ${exactPct}%</span>`;
+  }
+  const headerEl = document.getElementById("mwheader-"+r);
+  if (headerEl) headerEl.classList.toggle("done", done);
+  const statusEl = document.getElementById("mwstatuswrap-"+r);
+  if (statusEl) statusEl.innerHTML = `${accuracyBadges}<span class="mw-status">${playedCount}/${entries.length} ${done?'✓':''}</span>`;
+}
+
+// ---------- LIVE API MODE (football-data.org, full prediction model) ----------
+function normTeam(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s]/g,'')
+    .split(/\s+/)
+    .filter(w => w && !['fc','cf','afc','ac','sc','cd','sd','ud','rc','rcd','ssc','ss','ca','ec','the','club','clube','calcio','de','do','da','dos','das','1','04','05','07','29'].includes(w))
+    .join('');
+}
+function buildNormIndex(dataObj) {
+  const idx = {};
+  for (const [name, val] of Object.entries(dataObj)) idx[normTeam(name)] = val;
+  return idx;
+}
+
+const PRIOR_DED = {
+  "PSV Eindhoven":[101,45], "Feyenoord":[70,44], "NEC":[77,53], "Twente":[59,40], "Ajax":[62,41],
+  "Utrecht":[55,42], "AZ":[58,51], "Heerenveen":[57,53], "Groningen":[49,45], "Sparta Rotterdam":[40,62],
+  "Fortuna Sittard":[49,63], "Go Ahead Eagles":[54,53], "Excelsior":[43,56], "Telstar":[49,55], "PEC Zwolle":[44,71]
+};
+const PRIOR_PPL = {
+  "Porto":[66,18], "Sporting CP":[89,24], "Benfica":[74,25], "Braga":[64,36], "Famalicao":[42,29],
+  "Gil Vicente":[47,38], "Moreirense":[37,49], "Arouca":[47,64], "Vitoria de Guimaraes":[39,51],
+  "Estoril":[54,57], "Alverca":[35,52], "Rio Ave":[35,57], "Santa Clara":[32,41], "Nacional":[37,45],
+  "Estrela da Amadora":[38,56], "Casa Pia":[31,57]
+};
+const PRIOR_ELC = {
+  "Millwall":[64,49], "Southampton":[82,56], "Middlesbrough":[72,47], "Wrexham":[69,65],
+  "Derby County":[67,59], "Norwich City":[63,56], "Birmingham City":[57,56], "Swansea City":[57,59],
+  "Bristol City":[59,59], "Sheffield United":[66,66], "Preston North End":[55,62],
+  "Queens Park Rangers":[61,73], "Watford":[53,65], "Stoke City":[51,56], "Portsmouth":[49,64],
+  "Charlton Athletic":[44,58], "Blackburn Rovers":[42,56], "West Bromwich Albion":[48,58],
+  "West Ham":[56,79], "Burnley":[46,91], "Wolves":[33,82]
+};
+const PRIOR_BSA = {
+  "Flamengo":[78,27], "Palmeiras":[66,33], "Cruzeiro":[55,31], "Mirassol":[63,39], "Fluminense":[50,39],
+  "Botafogo":[58,38], "Bahia":[50,47], "Sao Paulo":[43,47], "Gremio":[47,50], "Red Bull Bragantino":[45,57],
+  "Atletico Mineiro":[43,44], "Santos":[45,50], "Corinthians":[42,47], "Vasco da Gama":[55,60],
+  "Vitoria":[35,52], "Internacional":[44,57]
+};
+
+const API_PRIOR = {
+  PL:   { data: PRIOR_EPL,    games: 38, avg: 1.375, promoted: [37,69], names: EPL_NAMES },
+  PD:   { data: PRIOR_LIGA,   games: 38, avg: 1.347, promoted: [37,57], names: LIGA_NAMES },
+  BL1:  { data: PRIOR_BL,     games: 34, avg: 1.618, promoted: [38,67], names: BL_NAMES },
+  SA:   { data: PRIOR_SERIEA, games: 38, avg: 1.213, promoted: [28,63], names: SERIEA_NAMES },
+  FL1:  { data: PRIOR_LIGUE1, games: 38, avg: 1.412, promoted: [31,66], names: LIGUE1_NAMES },
+  DED:  { data: PRIOR_DED,    games: 34, avg: 1.588, promoted: [35,66] },
+  PPL:  { data: PRIOR_PPL,    games: 34, avg: 1.341, promoted: [27,61] },
+  ELC:  { data: PRIOR_ELC,    games: 46, avg: 1.302, promoted: [44,72] },
+  BSA:  { data: PRIOR_BSA,    games: 38, avg: 1.262, promoted: [35,61] }
+};
+
+// short internal codes (e.g. "Man City") won't match the API's official names (e.g. "Manchester City FC"),
+// so index both forms using the existing display-name maps where available.
+function buildAliasedIndex(info) {
+  const idx = {};
+  Object.entries(info.data).forEach(([code, val]) => {
+    idx[normTeam(code)] = val;
+    if (info.names && info.names[code]) idx[normTeam(info.names[code])] = val;
+  });
+  return idx;
+}
+
+let CL_PRIOR_CACHE = null;
+function getCLPrior() {
+  if (CL_PRIOR_CACHE) return CL_PRIOR_CACHE;
+  const merged = {};
+  let sum = 0, count = 0;
+  Object.values(API_PRIOR).forEach(info => {
+    Object.entries(info.data).forEach(([code, arr]) => {
+      const rate = [arr[0]/info.games, arr[1]/info.games];
+      merged[normTeam(code)] = rate;
+      if (info.names && info.names[code]) merged[normTeam(info.names[code])] = rate;
+      sum += rate[0]; count++;
+    });
+  });
+  CL_PRIOR_CACHE = { data: merged, avg: count ? sum/count : 1.35, promotedRate: [1.1, 1.4] };
+  return CL_PRIOR_CACHE;
+}
+
+function getApiTeamPrior(compCode, apiTeamName) {
+  const key = normTeam(apiTeamName);
+  if (compCode === "CL") {
+    const cl = getCLPrior();
+    const rate = cl.data[key];
+    return rate ? { attack: rate[0], defense: rate[1] } : { attack: cl.promotedRate[0], defense: cl.promotedRate[1] };
+  }
+  const info = API_PRIOR[compCode];
+  if (!info) return { attack: 1.3, defense: 1.3 };
+  if (!info._idx) info._idx = buildAliasedIndex(info);
+  const totals = info._idx[key] || info.promoted;
+  return { attack: totals[0]/info.games, defense: totals[1]/info.games };
+}
+function getApiLeagueAvg(compCode) {
+  if (compCode === "CL") return getCLPrior().avg;
+  return API_PRIOR[compCode] ? API_PRIOR[compCode].avg : 1.35;
+}
+
+function apiGetTeamLogs(matches) {
+  const logs = {};
+  matches.filter(m => m.status==="FINISHED" && m.score && m.score.fullTime.home!==null)
+    .sort((a,b) => new Date(a.utcDate)-new Date(b.utcDate))
+    .forEach(m => {
+      const h=m.homeTeam.name, a=m.awayTeam.name, hg=m.score.fullTime.home, ag=m.score.fullTime.away;
+      if (!logs[h]) logs[h]=[]; if (!logs[a]) logs[a]=[];
+      logs[h].push({gf:hg,ga:ag}); logs[a].push({gf:ag,ga:hg});
+    });
+  return logs;
+}
+function apiBlendedStrength(compCode, teamName, logs, K) {
+  const prior = getApiTeamPrior(compCode, teamName);
+  const log = logs[teamName] || [];
+  const RECENT_N=5, RECENT_W=2;
+  let wSum=K, gfSum=prior.attack*K, gaSum=prior.defense*K;
+  log.forEach((g,idx) => {
+    const w = idx >= log.length-RECENT_N ? RECENT_W : 1;
+    wSum+=w; gfSum+=g.gf*w; gaSum+=g.ga*w;
+  });
+  return { attack: gfSum/wSum, defense: gaSum/wSum, weight: wSum };
+}
+function apiGetMatchupStrengths(compCode, matches, home, away, excludeId) {
+  const pool = excludeId!==undefined ? matches.filter(m=>m.id!==excludeId) : matches;
+  const logs = apiGetTeamLogs(pool);
+  const K = 6;
+  const H = apiBlendedStrength(compCode, home, logs, K);
+  const A = apiBlendedStrength(compCode, away, logs, K);
+  const h2h = getH2HRecords(home, away).filter(r => !(r.league===compCode && r.home===home && r.away===away));
+  if (h2h.length > 0) {
+    let sumH=0, sumA=0;
+    h2h.forEach(r => { if (r.home===home) { sumH+=r.hg; sumA+=r.ag; } else { sumH+=r.ag; sumA+=r.hg; } });
+    const avgH = sumH/h2h.length, avgA = sumA/h2h.length;
+    const w = Math.min(h2h.length,4)*1.5;
+    H.attack = (H.attack*H.weight + avgH*w) / (H.weight + w);
+    A.attack = (A.attack*A.weight + avgA*w) / (A.weight + w);
+  }
+  return { H, A, leagueAvg: getApiLeagueAvg(compCode), HOME_ADV: 1.12, h2hCount: h2h.length };
+}
+function apiPredictScore(compCode, matches, home, away, excludeId) {
+  const { H, A, leagueAvg, HOME_ADV } = apiGetMatchupStrengths(compCode, matches, home, away, excludeId);
+  const eh = (H.attack * A.defense / leagueAvg) * HOME_ADV;
+  const ea = (A.attack * H.defense / leagueAvg) / HOME_ADV;
+  return [Math.max(0, Math.round(eh)), Math.max(0, Math.round(ea))];
+}
+function apiPredictProbabilities(compCode, matches, home, away, excludeId) {
+  const { H, A, leagueAvg, HOME_ADV } = apiGetMatchupStrengths(compCode, matches, home, away, excludeId);
+  const lamH = (H.attack * A.defense / leagueAvg) * HOME_ADV;
+  const lamA = (A.attack * H.defense / leagueAvg) / HOME_ADV;
+  let pH=0, pD=0, pA=0; const MAXG=8;
+  for (let i=0;i<=MAXG;i++) for (let j=0;j<=MAXG;j++) {
+    const p = poissonP(i,lamH) * poissonP(j,lamA);
+    if (i>j) pH+=p; else if (i<j) pA+=p; else pD+=p;
+  }
+  const t = pH+pD+pA;
+  return [Math.round(pH/t*100), Math.round(pD/t*100), Math.round(pA/t*100)];
+}
+
+const API_COMPETITIONS = [
+  {code:"PL", name:"Premier League (Αγγλία)"},
+  {code:"PD", name:"La Liga (Ισπανία)"},
+  {code:"BL1", name:"Bundesliga (Γερμανία)"},
+  {code:"SA", name:"Serie A (Ιταλία)"},
+  {code:"FL1", name:"Ligue 1 (Γαλλία)"},
+  {code:"CL", name:"Champions League"},
+  {code:"DED", name:"Eredivisie (Ολλανδία)"},
+  {code:"PPL", name:"Primeira Liga (Πορτογαλία)"},
+  {code:"ELC", name:"Championship (Αγγλία, Β')"},
+  {code:"BSA", name:"Brasileirão (Βραζιλία)"},
+  {code:"WC", name:"Παγκόσμιο Κύπελλο"},
+  {code:"EC", name:"Euro (Εθνικές Ομάδες)"}
+];
+const NO_MODEL_COMPS = ["WC","EC"]; // national teams: no domestic-season prior baseline
+
+function getWorkerUrl() { return (localStorage.getItem("protathlimata_worker_url") || "").trim().replace(/\/$/, ""); }
+function setWorkerUrl(u) { localStorage.setItem("protathlimata_worker_url", u.trim().replace(/\/$/, "")); }
+
+// Το football-data.org (δωρεάν πλάνο) δεν επιτρέπει απευθείας κλήσεις από browser (CORS).
+// Αντί για public proxy τρίτων, καλούμε το δικό σου Cloudflare Worker (βλ. cloudflare-worker.js),
+// που κρατάει το API key του football-data.org μυστικό και προσθέτει τα σωστά CORS headers.
+async function apiFetch(path) {
+  const base = getWorkerUrl();
+  if (!base) throw new Error("NOKEY");
+  const res = await fetch(base + path);
+  if (res.status === 429) throw new Error("RATE_LIMIT");
+  if (res.status === 403) throw new Error("FORBIDDEN");
+  if (!res.ok) throw new Error("HTTP_" + res.status);
+  return res.json();
+}
+
+let apiCache = {};
+
+async function loadCompetition(code) {
+  const statusEl = document.getElementById("apiStatus");
+  statusEl.textContent = "Φόρτωση...";
+  try {
+    const [standingsData, matchesData] = await Promise.all([
+      apiFetch(`/competitions/${code}/standings`),
+      apiFetch(`/competitions/${code}/matches`)
+    ]);
+    apiCache[code] = { standings: standingsData, matches: matchesData.matches };
+    apiCache[code].matches.forEach(m => {
+      if (m.status==="FINISHED" && m.score && m.score.fullTime.home!==null) {
+        saveH2H(code, m.homeTeam.name, m.awayTeam.name, m.score.fullTime.home, m.score.fullTime.away);
+      }
+    });
+    statusEl.textContent = "Ενημερώθηκε: " + new Date().toLocaleTimeString('el-GR');
+    renderApiView(code);
+  } catch (e) {
+    if (e.message === "NOKEY") statusEl.textContent = "⚠️ Βάλε πρώτα το URL του Worker σου και πάτα Αποθήκευση.";
+    else if (e.message === "RATE_LIMIT") statusEl.textContent = "⚠️ Έφτασες το όριο αιτημάτων (10/λεπτό). Δοκίμασε ξανά σε λίγο.";
+    else if (e.message === "FORBIDDEN") statusEl.textContent = "⚠️ Μη έγκυρο API key στο Worker σου, ή αυτό το πρωτάθλημα δεν καλύπτεται στο δωρεάν πλάνο σου.";
+    else statusEl.textContent = "⚠️ Σφάλμα σύνδεσης (" + e.message + "). Δοκίμασε ξανά σε λίγο.";
+  }
+}
+
+function renderSimpleSplit(table) {
+  let h = `<table><thead><tr><th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Πόντοι</th></tr></thead><tbody>`;
+  table.forEach((row,i) => {
+    h += `<tr><td>${i+1}</td><td class="team">${row.team.name}</td><td>${row.playedGames}</td><td class="pts">${row.points}</td></tr>`;
+  });
+  h += `</tbody></table>`;
+  return h;
+}
+
+function renderApiView(code) {
+  const cache = apiCache[code];
+  if (!cache) return;
+  const total = cache.standings.standings.find(s=>s.type==="TOTAL");
+  const home = cache.standings.standings.find(s=>s.type==="HOME");
+  const away = cache.standings.standings.find(s=>s.type==="AWAY");
+
+  let html = `<table><thead><tr><th>#</th><th class="team">Ομάδα</th><th>Αγ</th><th>Ν</th><th>Ι</th><th>Η</th><th>ΓΥ</th><th>ΓΚ</th><th>Δ</th><th>Β</th></tr></thead><tbody>`;
+  (total ? total.table : []).forEach(row => {
+    html += `<tr><td>${row.position}</td><td class="team">${row.team.name}</td><td>${row.playedGames}</td><td>${row.won}</td><td>${row.draw}</td><td>${row.lost}</td><td>${row.goalsFor}</td><td>${row.goalsAgainst}</td><td>${row.goalDifference>0?'+':''}${row.goalDifference}</td><td class="pts">${row.points}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  if (home && away) {
+    html += `<div class="split-wrap">
+      <div><div class="split-title">🏠 Εντός</div>${renderSimpleSplit(home.table)}</div>
+      <div><div class="split-title">✈️ Εκτός</div>${renderSimpleSplit(away.table)}</div>
+    </div>`;
+  }
+  document.getElementById("apiStandings").innerHTML = html;
+
+  const matches = cache.matches;
+  const hasModel = !NO_MODEL_COMPS.includes(code);
+  const byDay = {};
+  matches.forEach(m => { const d=m.matchday||0; (byDay[d]=byDay[d]||[]).push(m); });
+  let fx = "";
+  Object.keys(byDay).sort((a,b)=>a-b).forEach(day => {
+    const dayMatches = byDay[day];
+    const playedCount = dayMatches.filter(m=>m.status==="FINISHED" && m.score && m.score.fullTime.home!==null).length;
+    const done = playedCount === dayMatches.length;
+    let accuracyBadges = "";
+    if (hasModel && playedCount > 0) {
+      let resultHits=0, exactHits=0;
+      dayMatches.forEach(m => {
+        if (!(m.status==="FINISHED" && m.score && m.score.fullTime.home!==null)) return;
+        const h=m.homeTeam.name, a=m.awayTeam.name, hg=m.score.fullTime.home, ag=m.score.fullTime.away;
+        const [ph,pa] = apiPredictScore(code, matches, h, a, m.id);
+        const actual = hg>ag?'H':(hg<ag?'A':'D');
+        const pred = ph>pa?'H':(ph<pa?'A':'D');
+        if (actual===pred) resultHits++;
+        if (ph===hg && pa===ag) exactHits++;
+      });
+      const resultPct = Math.round(resultHits/playedCount*100);
+      const exactPct = Math.round(exactHits/playedCount*100);
+      accuracyBadges = `<span class="acc-badge acc-yellow">🟡 ${resultPct}%</span><span class="acc-badge acc-green">🟢 ${exactPct}%</span>`;
+    }
+    fx += `<div class="mw-header ${done?'done':''}" data-day="${day}">
+      <span class="mw-title">Αγωνιστική ${day}</span>
+      <span class="mw-status-wrap">${accuracyBadges}<span class="mw-status">${playedCount}/${dayMatches.length} ${done?'✓':''}</span></span>
+    </div><div class="mw-body hidden" id="apimw-${day}">`;
+    dayMatches.forEach(m => {
+      const dateStr = new Date(m.utcDate).toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit'});
+      const h=m.homeTeam.name, a=m.awayTeam.name;
+      const isPlayed = m.status==="FINISHED" && m.score && m.score.fullTime.home!==null;
+      fx += `<div class="match-row-wrap"><div class="match-date">${dateStr}</div>`;
+      if (isPlayed) {
+        const hg=m.score.fullTime.home, ag=m.score.fullTime.away;
+        fx += `<div class="match-row"><span class="home">${h}</span><span>${hg} - ${ag}</span><span class="away">${a}</span></div>`;
+        if (hasModel) {
+          const [ph,pa] = apiPredictScore(code, matches, h, a, m.id);
+          const exactHit = (ph===hg && pa===ag);
+          const actualResult = hg>ag?'H':(hg<ag?'A':'D');
+          const predResult = ph>pa?'H':(ph<pa?'A':'D');
+          const resultHit = actualResult === predResult;
+          const cls = exactHit ? 'hit-exact' : (resultHit ? 'hit-result' : 'hit-miss');
+          const label = exactHit ? '✅ ακριβές' : (resultHit ? '🟡 σωστό αποτέλεσμα' : '❌');
+          fx += `<div class="predict-hint ${cls}">🔮 πρόβλεψη ήταν: ${ph}-${pa} · ${label}</div>`;
+        }
+      } else {
+        fx += `<div class="match-row"><span class="home">${h}</span><span class="dash">vs</span><span class="away">${a}</span></div>`;
+        if (hasModel) {
+          const [ph,pa] = apiPredictScore(code, matches, h, a);
+          const [p1,pX,p2] = apiPredictProbabilities(code, matches, h, a);
+          const h2hCount = getH2HRecords(h, a).length;
+          const h2hNote = h2hCount > 0 ? ` <span class="h2h-tag">βάσει ${h2hCount} προηγ.</span>` : "";
+          fx += `<div class="predict-hint">🔮 πιθανό: ${ph}-${pa}</div><div class="probs-line">${p1}% · ${pX}% Χ · ${p2}%${h2hNote}</div>`;
+        }
+      }
+      fx += `</div>`;
+    });
+    fx += `</div>`;
+  });
+  document.getElementById("apiFixtures").innerHTML = fx;
+  document.querySelectorAll("#apiFixtures .mw-header").forEach(hdr => {
+    hdr.addEventListener("click", () => {
+      document.getElementById("apimw-"+hdr.dataset.day).classList.toggle("hidden");
+    });
+  });
+}
+
+function initApiMode() {
+  const sel = document.getElementById("compSelect");
+  sel.innerHTML = API_COMPETITIONS.map(c => `<option value="${c.code}">${c.name}</option>`).join("");
+  const urlInput = document.getElementById("workerUrlInput");
+  urlInput.value = getWorkerUrl();
+  document.getElementById("saveKeyBtn").addEventListener("click", () => {
+    setWorkerUrl(urlInput.value);
+    document.getElementById("apiStatus").textContent = "✅ Αποθηκεύτηκε το URL.";
+  });
+  document.getElementById("refreshApiBtn").addEventListener("click", () => {
+    loadCompetition(sel.value);
   });
 }
 
@@ -997,13 +1985,18 @@ document.querySelectorAll(".subtab").forEach(st => {
     render();
   });
 });
+const LEAGUE_LABELS = { epl: "Premier League", liga: "La Liga", bundesliga: "Bundesliga", seriea: "Serie A", ligue1: "Ligue 1" };
+
 document.getElementById("resetBtn").addEventListener("click", () => {
-  const leagueLabel = currentLeague==="epl" ? "Premier League" : (currentLeague==="liga" ? "La Liga" : "Bundesliga");
+  if (currentLeague === "api") return;
+  const leagueLabel = LEAGUE_LABELS[currentLeague];
   if (!confirm("Σίγουρα θέλεις να διαγράψεις όλα τα καταχωρημένα σκορ για το τρέχον πρωτάθλημα (" + leagueLabel + ");")) return;
   localStorage.removeItem("protathlimata_" + currentLeague + "_v1");
   if (currentLeague === "epl") eplData = loadFixtures("epl");
   else if (currentLeague === "liga") ligaData = loadFixtures("liga");
-  else blData = loadFixtures("bundesliga");
+  else if (currentLeague === "bundesliga") blData = loadFixtures("bundesliga");
+  else if (currentLeague === "seriea") seriaData = loadFixtures("seriea");
+  else ligue1Data = loadFixtures("ligue1");
   render();
 });
 
